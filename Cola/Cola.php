@@ -9,6 +9,7 @@ require COLA_DIR . '/Config.php';
 
 class Cola
 {
+
     /**
      * Singleton instance
      *
@@ -17,7 +18,7 @@ class Cola
      *
      * @var Cola
      */
-    protected static $_instance = null;
+    protected static $instance = null;
 
     /**
      * Object register
@@ -62,15 +63,15 @@ class Cola
     {
         $this->config = new Cola_Config(array(
             '_class' => array(
-                'Cola_Model'               => COLA_DIR . '/Model.php',
-                'Cola_View'                => COLA_DIR . '/View.php',
-                'Cola_Controller'          => COLA_DIR . '/Controller.php',
-                'Cola_Router'              => COLA_DIR . '/Router.php',
-                'Cola_Request'             => COLA_DIR . '/Request.php',
-                'Cola_Response'            => COLA_DIR . '/Response.php',
-                'Cola_Ext_Validate'        => COLA_DIR . '/Ext/Validate.php',
-                'Cola_Exception'           => COLA_DIR . '/Exception.php',
-                'Cola_Exception_Dispatch'  => COLA_DIR . '/Exception/Dispatch.php',
+                'Cola_Model' => COLA_DIR . '/Model.php',
+                'Cola_View' => COLA_DIR . '/View.php',
+                'Cola_Controller' => COLA_DIR . '/Controller.php',
+                'Cola_Router' => COLA_DIR . '/Router.php',
+                'Cola_Request' => COLA_DIR . '/Request.php',
+                'Cola_Response' => COLA_DIR . '/Response.php',
+                'Cola_Ext_Validate' => COLA_DIR . '/Ext/Validate.php',
+                'Cola_Exception' => COLA_DIR . '/Exception.php',
+                'Cola_Exception_Dispatch' => COLA_DIR . '/Exception/Dispatch.php',
             ),
         ));
 
@@ -80,7 +81,7 @@ class Cola
     /**
      * Bootstrap
      *
-     * @param mixed $arg string as a file and array as config
+     * @param mixed $config string as a file and array as config
      * @return Cola
      */
     public static function boot($config = 'config.inc.php')
@@ -94,7 +95,7 @@ class Cola
         }
 
         self::getInstance()->config->merge($config);
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -104,11 +105,11 @@ class Cola
      */
     public static function getInstance()
     {
-        if (null === self::$_instance) {
-            self::$_instance = new self();
+        if (null === self::$instance) {
+            self::$instance = new self();
         }
 
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -122,7 +123,7 @@ class Cola
     public static function setConfig($name, $value, $delimiter = '.')
     {
         self::getInstance()->config->set($name, $value, $delimiter);
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -145,7 +146,7 @@ class Cola
     public static function setReg($name, $obj)
     {
         self::getInstance()->reg[$name] = $obj;
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -198,7 +199,7 @@ class Cola
          */
         if ((!$classFile) && ('Cola' === substr($className, 0, 4))) {
             $classFile = dirname(COLA_DIR) . DIRECTORY_SEPARATOR
-                       . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+                    . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
         }
 
         /**
@@ -236,7 +237,7 @@ class Cola
 
         self::getInstance()->config->merge(array('_class' => $class));
 
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -249,7 +250,7 @@ class Cola
     public static function registerAutoload($func = 'Cola::loadClass', $enable = true)
     {
         $enable ? spl_autoload_register($func) : spl_autoload_unregister($func);
-        return self::$_instance;
+        return self::$instance;
     }
 
     /**
@@ -263,9 +264,7 @@ class Cola
         if ((null === $this->dispatchInfo) && $init) {
             $this->router || ($this->router = new Cola_Router());
 
-            if ($urls = self::getConfig('_urls')) {
-                $this->router->rules += $urls;
-            }
+            $this->router->rules += self::getConfig('_urls')? : array();
 
             $this->pathInfo || $this->pathInfo = (isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '');
 
@@ -308,4 +307,5 @@ class Cola
             call_user_func($func);
         }
     }
+
 }

@@ -1,25 +1,27 @@
 <?php
+
 /**
  * use https://github.com/nicolasff/phpredis
  *
  */
 class Cola_Ext_Cache_Redis extends Cola_Ext_Cache_Abstract
 {
-    public $options = array(
-        'persistent'            => true,
-        'host'                  => '127.0.0.1',
-        'port'                  => 6379,
-        'timeout'               => 3,
-        'ttl'                   => 0,
-    );
 
+    public $options = array(
+        'persistent' => true,
+        'host' => '127.0.0.1',
+        'port' => 6379,
+        'timeout' => 3,
+        'ttl' => 0,
+    );
     public $optionKeys = array(Redis::OPT_SERIALIZER, Redis::OPT_PREFIX);
+
     /**
      * Constructor
      *
      * @param array $options
      */
-    public function __construct($options=array())
+    public function __construct($options = array())
     {
         parent::__construct($options);
 
@@ -42,20 +44,20 @@ class Cola_Ext_Cache_Redis extends Cola_Ext_Cache_Abstract
      * Set cache
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed $data
      * @param int $ttl
      * @return boolean
      */
-    public function set($id, $data, $ttl = null)
+    public function set($key, $data, $ttl = null)
     {
         if (null === $ttl) {
             $ttl = $this->options['ttl'];
         }
 
         if (empty($ttl)) {
-            return $this->conn->set($id, $data);
+            return $this->conn->set($key, $data);
         } else {
-            return $this->conn->setex($id, $ttl, $data);
+            return $this->conn->setex($key, $ttl, $data);
         }
     }
 
@@ -72,4 +74,5 @@ class Cola_Ext_Cache_Redis extends Cola_Ext_Cache_Abstract
         }
         return array_combine($id, $this->conn->mGet($id));
     }
+
 }

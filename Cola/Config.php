@@ -1,12 +1,14 @@
 <?php
+
 class Cola_Config implements ArrayAccess
 {
+
     /**
      * Contains array of configuration data
      *
      * @var array
      */
-    protected $_data = array();
+    protected $data = array();
 
     /**
      * Cola_Config provides a property based interface to
@@ -21,7 +23,7 @@ class Cola_Config implements ArrayAccess
      */
     public function __construct(array $data = array())
     {
-        $this->_data = $data;
+        $this->data = $data;
     }
 
     /**
@@ -34,18 +36,18 @@ class Cola_Config implements ArrayAccess
     public function get($name = null, $default = null, $delimiter = '.')
     {
         if (null === $name) {
-            return $this->_data;
+            return $this->data;
         }
 
         if (false === strpos($name, $delimiter)) {
-            return isset($this->_data[$name]) ? $this->_data[$name] : $default;
+            return isset($this->data[$name]) ? $this->data[$name] : $default;
         }
 
-        $name = explode($delimiter, $name);
-
-        $ret = $this->_data;
-        foreach ($name as $key) {
-            if (!isset($ret[$key])) return $default;
+        $ret = $this->data;
+        foreach (explode($delimiter, $name) as $key) {
+            if (!isset($ret[$key])) {
+                return $default;
+            }
             $ret = $ret[$key];
         }
 
@@ -65,14 +67,16 @@ class Cola_Config implements ArrayAccess
 
     public function set($name, $value, $delimiter = '.')
     {
-        $pos = & $this->_data;
+        $pos = & $this->data;
         if (!is_string($delimiter) || false === strpos($name, $delimiter)) {
             $key = $name;
         } else {
             $name = explode($delimiter, $name);
             $cnt = count($name);
             for ($i = 0; $i < $cnt - 1; $i ++) {
-                if (!isset($pos[$name[$i]])) $pos[$name[$i]] = array();
+                if (!isset($pos[$name[$i]])) {
+                    $pos[$name[$i]] = array();
+                }
                 $pos = & $pos[$name[$i]];
             }
             $key = $name[$cnt - 1];
@@ -106,7 +110,7 @@ class Cola_Config implements ArrayAccess
      */
     public function __isset($name)
     {
-        return isset($this->_data[$name]);
+        return isset($this->data[$name]);
     }
 
     /**
@@ -119,12 +123,11 @@ class Cola_Config implements ArrayAccess
     public function __unset($name)
     {
         if ($this->_allowModifications) {
-            unset($this->_data[$name]);
+            unset($this->data[$name]);
         } else {
             throw new Cola_Exception('Cola_Config is read only');
         }
     }
-
 
     /**
      * Defined by Iterator interface
@@ -133,7 +136,7 @@ class Cola_Config implements ArrayAccess
      */
     public function keys()
     {
-        return array_keys($this->_data);
+        return array_keys($this->data);
     }
 
     /**
@@ -144,7 +147,7 @@ class Cola_Config implements ArrayAccess
      */
     public function merge($config)
     {
-        $this->_data = $this->_merge($this->_data, $config);
+        $this->data = $this->_merge($this->data, $config);
         return $this;
     }
 
@@ -157,8 +160,8 @@ class Cola_Config implements ArrayAccess
      */
     protected function _merge($arr1, $arr2)
     {
-        foreach($arr2 as $key => $value) {
-            if(isset($arr1[$key]) && is_array($value)) {
+        foreach ($arr2 as $key => $value) {
+            if (isset($arr1[$key]) && is_array($value)) {
                 $arr1[$key] = $this->_merge($arr1[$key], $arr2[$key]);
             } else {
                 $arr1[$key] = $value;
@@ -211,4 +214,5 @@ class Cola_Config implements ArrayAccess
     {
         return $this->set($offset, null);
     }
+
 }

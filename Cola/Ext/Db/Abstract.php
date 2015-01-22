@@ -1,24 +1,25 @@
 <?php
+
 /**
  *
  */
-
 abstract class Cola_Ext_Db_Abstract
 {
+
     /**
      * Configuration
      *
      * @var array
      */
     public $config = array(
-        'host'       => '127.0.0.1',
-        'port'       => 3306,
-        'user'       => 'test',
-        'password'   => '',
-        'database'   => 'test',
-        'charset'    => 'utf8',
+        'host' => '127.0.0.1',
+        'port' => 3306,
+        'user' => 'test',
+        'password' => '',
+        'database' => 'test',
+        'charset' => 'utf8',
         'persistent' => false,
-        'options'    => array()
+        'options' => array()
     );
 
     /**
@@ -196,7 +197,7 @@ abstract class Cola_Ext_Db_Abstract
         $keys = array();
         $values = array();
         foreach ($data as $key => $value) {
-            $keys[] = "`$key`";
+            $keys[] = "`{$key}`";
             $values[] = "'" . $this->escape($value) . "'";
         }
         $keys = implode(',', $keys);
@@ -213,12 +214,12 @@ abstract class Cola_Ext_Db_Abstract
      * @param string $table
      * @return int
      */
-    public function update($data, $where = '0', $table)
+    public function update($data, $where, $table)
     {
         $tmp = array();
 
         foreach ($data as $key => $value) {
-            $tmp[] = "`$key`='" . $this->escape($value) . "'";
+            $tmp[] = "`{$key}`='" . $this->escape($value) . "'";
         }
 
         $str = implode(',', $tmp);
@@ -235,9 +236,9 @@ abstract class Cola_Ext_Db_Abstract
      * @param string $table
      * @return int
      */
-    public function delete($where = '0', $table)
+    public function delete($where, $table)
     {
-        $sql = "delete from $table where $where";
+        $sql = "delete from {$table} where {$where}";
         return $this->sql($sql);
     }
 
@@ -250,7 +251,7 @@ abstract class Cola_Ext_Db_Abstract
      */
     public function count($where, $table)
     {
-        $sql = "select count(1) as cnt from $table where $where";
+        $sql = "select count(1) as cnt from {$table} where {$where}";
         $this->query($sql);
         $result = $this->fetch();
         return empty($result['cnt']) ? 0 : $result['cnt'];

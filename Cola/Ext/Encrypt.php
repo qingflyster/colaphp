@@ -1,19 +1,19 @@
 <?php
+
 /**
  *
  */
-
 class Cola_Ext_Encrypt
 {
-    protected $_config = array(
-        'hash'      => 'sha1',
-        'xor'       => false,
-        'mcrypt'    => false,
-        'noise'     => true,
-        'cipher'    => MCRYPT_RIJNDAEL_256,
-        'mode'      => MCRYPT_MODE_ECB
-    );
 
+    protected $_config = array(
+        'hash' => 'sha1',
+        'xor' => false,
+        'mcrypt' => false,
+        'noise' => true,
+        'cipher' => MCRYPT_RIJNDAEL_256,
+        'mode' => MCRYPT_MODE_ECB
+    );
     protected $_key;
 
     /**
@@ -83,7 +83,7 @@ class Cola_Ext_Encrypt
             $str = $this->_noise($str, $key);
         }
 
-		return base64_encode($str);
+        return base64_encode($str);
     }
 
     /**
@@ -95,7 +95,8 @@ class Cola_Ext_Encrypt
      */
     public function decode($str, $key = null)
     {
-        if (is_null($key)) $key = $this->_key;
+        if (is_null($key))
+            $key = $this->_key;
 
         if (preg_match('/[^a-zA-Z0-9\/\+=]/', $str)) {
             return false;
@@ -128,11 +129,11 @@ class Cola_Ext_Encrypt
     protected function _mcryptEncode($str, $key)
     {
         $cipher = $this->_config['cipher'];
-        $mode   = $this->_config['mode'];
+        $mode = $this->_config['mode'];
         $size = mcrypt_get_iv_size($cipher, $mode);
-		$vect = mcrypt_create_iv($size, MCRYPT_RAND);
+        $vect = mcrypt_create_iv($size, MCRYPT_RAND);
 
-		return mcrypt_encrypt($cipher, $key, $str, $mode, $vect);
+        return mcrypt_encrypt($cipher, $key, $str, $mode, $vect);
     }
 
     /**
@@ -145,11 +146,11 @@ class Cola_Ext_Encrypt
     protected function _mcryptDecode($str, $key)
     {
         $cipher = $this->_config['cipher'];
-        $mode   = $this->_config['mode'];
-		$size = mcrypt_get_iv_size($cipher, $mode);
-		$vect = mcrypt_create_iv($size, MCRYPT_RAND);
+        $mode = $this->_config['mode'];
+        $size = mcrypt_get_iv_size($cipher, $mode);
+        $vect = mcrypt_create_iv($size, MCRYPT_RAND);
 
-		return rtrim(mcrypt_decrypt($cipher, $key, $str, $mode, $vect), "\0");
+        return rtrim(mcrypt_decrypt($cipher, $key, $str, $mode, $vect), "\0");
     }
 
     /**
@@ -163,12 +164,12 @@ class Cola_Ext_Encrypt
     {
         $rand = $this->_config['hash'](rand());
         $code = '';
-		for ($i = 0; $i < strlen($str); $i++) {
-		    $r = substr($rand, ($i % strlen($rand)), 1);
-			$code .= $r . ($r ^ substr($str, $i, 1));
-		}
+        for ($i = 0; $i < strlen($str); $i++) {
+            $r = substr($rand, ($i % strlen($rand)), 1);
+            $code .= $r . ($r ^ substr($str, $i, 1));
+        }
 
-		return $this->_xor($code, $key);
+        return $this->_xor($code, $key);
     }
 
     /**
@@ -183,9 +184,9 @@ class Cola_Ext_Encrypt
         $str = $this->_xor($str, $key);
         $code = '';
         for ($i = 0; $i < strlen($str); $i++) {
-			$code .= (substr($str, $i++, 1) ^ substr($str, $i, 1));
-		}
-		return $code;
+            $code .= (substr($str, $i++, 1) ^ substr($str, $i, 1));
+        }
+        return $code;
     }
 
     /**
@@ -200,9 +201,9 @@ class Cola_Ext_Encrypt
         $hash = $this->_config['hash']($key);
         $code = '';
         for ($i = 0; $i < strlen($str); $i++) {
-			$code .= substr($str, $i, 1) ^ substr($hash, ($i % strlen($hash)), 1);
-		}
-		return $code;
+            $code .= substr($str, $i, 1) ^ substr($hash, ($i % strlen($hash)), 1);
+        }
+        return $code;
     }
 
     /**
@@ -216,16 +217,18 @@ class Cola_Ext_Encrypt
     protected function _noise($str, $key)
     {
         $hash = $this->_config['hash']($key);
-		$hashlen = strlen($hash);
-		$strlen = strlen($str);
-		$code = '';
+        $hashlen = strlen($hash);
+        $strlen = strlen($str);
+        $code = '';
 
-		for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
-			if ($j >= $hashlen) $j = 0;
-			$code .= chr((ord($str[$i]) + ord($hash[$j])) % 256);
-		}
+        for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
+            if ($j >= $hashlen) {
+                $j = 0;
+            }
+            $code .= chr((ord($str[$i]) + ord($hash[$j])) % 256);
+        }
 
-		return $code;
+        return $code;
     }
 
     /**
@@ -238,17 +241,22 @@ class Cola_Ext_Encrypt
     protected function _denoise($str, $key)
     {
         $hash = $this->_config['hash']($key);
-		$hashlen = strlen($hash);
-		$strlen = strlen($str);
-		$code = '';
+        $hashlen = strlen($hash);
+        $strlen = strlen($str);
+        $code = '';
 
-		for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
-			if ($j >= $hashlen) $j = 0;
-			$temp = ord($str[$i]) - ord($hash[$j]);
-			if ($temp < 0) $temp = $temp + 256;
-			$code .= chr($temp);
-		}
+        for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
+            if ($j >= $hashlen) {
+                $j = 0;
+            }
+            $temp = ord($str[$i]) - ord($hash[$j]);
+            if ($temp < 0) {
+                $temp = $temp + 256;
+            }
+            $code .= chr($temp);
+        }
 
-		return $code;
+        return $code;
     }
+
 }

@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 class Cola_Ext_Cache_Null extends Cola_Ext_Cache_Abstract
 {
+
     /**
      * Set cache
      *
@@ -45,4 +47,5 @@ class Cola_Ext_Cache_Null extends Cola_Ext_Cache_Abstract
     {
         return true;
     }
+
 }

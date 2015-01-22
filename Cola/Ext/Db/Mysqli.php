@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  */
-
 class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
 {
+
     /**
      * Connect to database
      *
@@ -25,12 +26,13 @@ class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
 
         $this->conn = mysqli_init();
         $connected = @mysqli_real_connect(
-            $this->conn, $this->config['host'], $this->config['user'],
-            $this->config['password'], $this->config['database'], $this->config['port']
+                        $this->conn, $this->config['host'], $this->config['user'], $this->config['password'], $this->config['database'], $this->config['port']
         );
 
         if ($connected) {
-            if ($this->config['charset']) $this->query("SET NAMES '{$this->config['charset']}';");
+            if ($this->config['charset']) {
+                $this->query("SET NAMES '{$this->config['charset']}';");
+            }
             return $this->conn;
         }
 
@@ -146,8 +148,6 @@ class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
         }
         $this->query->free();
         return $result;
-
-
     }
 
     /**
@@ -197,9 +197,9 @@ class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
      */
     public function escape($str)
     {
-        if($this->conn) {
-            return  $this->conn->real_escape_string($str);
-        }else{
+        if ($this->conn) {
+            return $this->conn->real_escape_string($str);
+        } else {
             return addslashes($str);
         }
     }
@@ -242,4 +242,5 @@ class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
 
         return false;
     }
+
 }

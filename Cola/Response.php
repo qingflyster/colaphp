@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 class Cola_Response
 {
+
     static protected $statusTexts = array(
         '100' => 'Continue',
         '101' => 'Switching Protocols',
@@ -49,17 +51,17 @@ class Cola_Response
     );
 
     /**
-    * Sets response status code.
-    *
-    * @param string $code  HTTP status code
-    * @param string $name  HTTP status text
-    *
-    */
+     * Sets response status code.
+     *
+     * @param string $code  HTTP status code
+     * @param string $text  HTTP status text
+     *
+     */
     public static function statusCode($code, $text = null)
     {
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
         $text = (null === $text) ? self::$statusTexts[$code] : $text;
-        $status = "$protocol $code $text";
+        $status = "{$protocol} {$code} {$text}";
         header($status);
     }
 
@@ -88,7 +90,7 @@ class Cola_Response
      */
     public static function charset($enc = 'UTF-8', $type = 'text/html')
     {
-        header("Content-Type:$type;charset=$enc");
+        header("Content-Type:{$type};charset={$enc}");
     }
 
     /**
@@ -98,7 +100,7 @@ class Cola_Response
      */
     public static function redirect($url, $code = 302)
     {
-        header("Location:$url", true, $code);
+        header("Location:{$url}", true, $code);
         exit();
     }
 
@@ -111,12 +113,14 @@ class Cola_Response
     public static function alert($text, $url = null)
     {
         $text = addslashes($text);
-        echo "\n<script type=\"text/javascript\">\nalert(\"$text\");\n";
+        echo "\n<script type=\"text/javascript\">\nalert(\"{$text}\");\n";
         if ($url) {
-            echo "window.location.href=\"$url\";\n";
+            echo "window.location.href=\"{$url}\";\n";
         }
         echo "</script>\n";
-        if ($url) exit();
+        if ($url) {
+            exit;
+        }
     }
 
     /**
@@ -146,9 +150,9 @@ class Cola_Response
     {
         if ($notModifiedExit && isset($_SERVER['HTTP_IF_NONE_MATCH']) && $etag == $_SERVER['HTTP_IF_NONE_MATCH']) {
             self::statusCode('304');
-            exit();
+            exit;
         }
-        header("Etag: $etag");
+        header("Etag: {$etag}");
     }
 
     /**
@@ -162,9 +166,9 @@ class Cola_Response
         $modifiedTime = date('D, d M Y H:i:s \G\M\T', $modifiedTime);
         if ($notModifiedExit && isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $modifiedTime == $_SERVER['HTTP_IF_MODIFIED_SINCE']) {
             self::statusCode('304');
-            exit();
+            exit;
         }
-        header("Last-Modified: $modifiedTime");
+        header("Last-Modified: {$modifiedTime}");
     }
 
     /**
@@ -175,6 +179,7 @@ class Cola_Response
     public static function expires($seconds = 1800)
     {
         $time = date('D, d M Y H:i:s', time() + $seconds) . ' GMT';
-        header("Expires: $time");
+        header("Expires: {$time}");
     }
+
 }

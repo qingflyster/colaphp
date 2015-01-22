@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 class Cola_Request
 {
+
     /**
      * Retrieve a member of the pathinfo params
      *
@@ -13,9 +15,11 @@ class Cola_Request
      */
     public static function param($key = null, $default = null)
     {
-        $params = (array)Cola::getReg('_params');
+        $params = (array) Cola::getReg('_params');
 
-        if (null === $key) return $params;
+        if (null === $key) {
+            return $params;
+        }
 
         return (isset($params[$key]) ? $params[$key] : $default);
     }
@@ -168,15 +172,20 @@ class Cola_Request
     {
         $url = 'http';
 
-        if ('on' == self::server('HTTPS')) $url .= 's';
+        if ('on' == self::server('HTTPS')) {
+            $url .= 's';
+        }
 
         $url .= "://" . self::server('SERVER_NAME');
 
         $port = self::server('SERVER_PORT');
-        if (80 != $port) $url .= ":{$port}";
+        if (80 != $port) {
+            $url .= ":{$port}";
+        }
 
         return $url . self::server('REQUEST_URI');
     }
+
     /**
      * Was the request made by POST?
      *
@@ -295,16 +304,18 @@ class Cola_Request
 
     /**
      * Check if search engine spider
-     *
+     * @param string $ua 
      * @return boolean
      */
     public static function isSpider($ua = null)
     {
         is_null($ua) && $ua = $_SERVER['HTTP_USER_AGENT'];
         $ua = strtolower($ua);
-        $spiders = array('bot', 'crawl', 'spider' ,'slurp', 'sohu-search', 'lycos', 'robozilla');
+        $spiders = array('bot', 'crawl', 'spider', 'slurp', 'sohu-search', 'lycos', 'robozilla');
         foreach ($spiders as $spider) {
-            if (false !== strpos($ua, $spider)) return true;
+            if (false !== strpos($ua, $spider)) {
+                return true;
+            }
         }
         return false;
     }
@@ -330,13 +341,18 @@ class Cola_Request
         $keys = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR');
 
         foreach ($keys as $key) {
-            if (empty($_SERVER[$key])) continue;
-		    $ips = explode(',', $_SERVER[$key], 1);
-		    $ip = $ips[0];
-		    $l  = ip2long($ip);
-		    if ((false !== $l) && ($ip === long2ip($l))) return $ip;
-		}
+            if (empty($_SERVER[$key])) {
+                continue;
+            }
+            $ips = explode(',', $_SERVER[$key], 1);
+            $ip = $ips[0];
+            $l = ip2long($ip);
+            if ((false !== $l) && ($ip === long2ip($l))) {
+                return $ip;
+            }
+        }
 
         return $default;
     }
+
 }

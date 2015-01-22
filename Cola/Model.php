@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Model
 {
+
     const ERROR_VALIDATE_CODE = -400;
 
     /**
@@ -68,8 +70,7 @@ abstract class Cola_Model
         $sql = "select * from {$this->_table} where {$col} = '{$id}'";
 
         try {
-            $result = $this->db->row($sql);
-            return $result;
+            return $this->db->row($sql);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -82,15 +83,14 @@ abstract class Cola_Model
      * @param array $opts
      * @return array
      */
-    public function find($opts = array())
+    public function find(array $opts = array())
     {
         is_string($opts) && $opts = array('where' => $opts);
 
         $opts += array('table' => $this->_table);
 
         try {
-            $result = $this->db->find($opts);
-            return $result;
+            return $this->db->find($opts);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -111,8 +111,7 @@ abstract class Cola_Model
         }
 
         try {
-            $result = $this->db->count($where, $table);
-            return $result;
+            return $this->db->count($where, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -128,8 +127,7 @@ abstract class Cola_Model
     public function sql($sql)
     {
         try {
-            $result = $this->db->sql($sql);
-            return $result;
+            return $this->db->sql($sql);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -150,8 +148,7 @@ abstract class Cola_Model
         }
 
         try {
-            $result = $this->db->insert($data, $table);
-            return $result;
+            return $this->db->insert($data, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -167,10 +164,10 @@ abstract class Cola_Model
      */
     public function update($id, $data)
     {
-        $where = $this->_pk . '=' . (is_int($id) ? $id : "'$id'");
+        $where = $this->_pk . '=' . (is_int($id) ? $id : "'{$id}'");
 
         try {
-            $result = $this->db->update($data, $where, $this->_table);
+            $this->db->update($data, $where, $this->_table);
             return true;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
@@ -181,19 +178,19 @@ abstract class Cola_Model
     /**
      * Delete
      *
-     * @param string $where
-     * @param string $table
+     * @param string $id
+     * @param string $col
      * @return boolean
      */
-    public function delete($id, $col = null)
+    public function delete($id, $col = null, $table = null)
     {
         is_null($col) && $col = $this->_pk;
+        is_null($table) && $table = $this->_table;
         $id = $this->escape($id);
         $where = "{$col} = '{$id}'";
 
         try {
-            $result = $this->db->delete($where, $this->_table);
-            return $result;
+            return $this->db->delete($where, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -228,7 +225,7 @@ abstract class Cola_Model
 
         $regName = "_cola_db_{$name}";
         if (!$db = Cola::getReg($regName)) {
-            $config = (array)Cola::getConfig($name) + array('adapter' => 'Pdo_Mysql');
+            $config = (array) Cola::getConfig($name) + array('adapter' => 'Pdo_Mysql');
             $db = Cola::factory('Cola_Ext_Db', $config);
             Cola::setReg($regName, $db);
         }
@@ -252,7 +249,7 @@ abstract class Cola_Model
 
         $regName = "_cola_cache_{$name}";
         if (!$cache = Cola::getReg($regName)) {
-            $config = (array)Cola::getConfig($name);
+            $config = (array) Cola::getConfig($name);
             $cache = Cola::factory('Cola_Ext_Cache', $config);
             Cola::setReg($regName, $cache);
         }
@@ -348,7 +345,8 @@ abstract class Cola_Model
                 return $this->config;
 
             default:
-                throw new Cola_Exception('Undefined property: ' . get_class($this). '::' . $key);
+                throw new Cola_Exception('Undefined property: ' . get_class($this) . '::' . $key);
         }
     }
+
 }

@@ -1,11 +1,12 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Ext_Cache_Abstract
 {
-    public $conn;
 
+    public $conn;
     public $options = array(
         'ttl' => 900
     );
@@ -54,7 +55,7 @@ abstract class Cola_Ext_Cache_Abstract
         return $this->delete($key);
     }
 
-     /**
+    /**
      * Magic method
      *
      * @param string $method
@@ -64,4 +65,5 @@ abstract class Cola_Ext_Cache_Abstract
     {
         return call_user_func_array(array($this->conn, $method), $args);
     }
+
 }

@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  */
-
 class Cola_Ext_Http
 {
+
     /**
      * Default params
      *
@@ -13,8 +14,8 @@ class Cola_Ext_Http
     public static $defaultParams = array(
         'headers' => array(),
         'timeout' => 15,
-        'ssl'     => false,
-        'opts'    => array(),
+        'ssl' => false,
+        'opts' => array(),
     );
 
     /**
@@ -52,7 +53,7 @@ class Cola_Ext_Http
      */
     public static function post($url, $data, $params = array())
     {
-        $params['opts'][CURLOPT_POST]       = true;
+        $params['opts'][CURLOPT_POST] = true;
         $params['opts'][CURLOPT_POSTFIELDS] = http_build_query($data);
         return self::request($url, $params);
     }
@@ -60,7 +61,7 @@ class Cola_Ext_Http
     /**
      * HTTP request
      *
-     * @param string $uri
+     * @param string $url
      * @param array $params
      * @return string or throw Exception
      */
@@ -84,7 +85,7 @@ class Cola_Ext_Http
             throw new Cola_Exception($error, $errno);
         }
 
-        curl_close ($curl);
+        curl_close($curl);
         return $response;
     }
 
@@ -99,8 +100,8 @@ class Cola_Ext_Http
     {
         $params += self::$defaultParams;
         $opts = $params['opts'] + array(
-            CURLOPT_URL            => $url,
-            CURLOPT_TIMEOUT        => $params['timeout'],
+            CURLOPT_URL => $url,
+            CURLOPT_TIMEOUT => $params['timeout'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => $params['ssl'],
         );
@@ -111,4 +112,5 @@ class Cola_Ext_Http
 
         return $opts;
     }
+
 }
