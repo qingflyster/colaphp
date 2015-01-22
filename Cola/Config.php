@@ -1,6 +1,8 @@
 <?php
+
 class Cola_Config implements ArrayAccess
 {
+
     /**
      * Contains array of configuration data
      *
@@ -41,11 +43,11 @@ class Cola_Config implements ArrayAccess
             return isset($this->_data[$name]) ? $this->_data[$name] : $default;
         }
 
-        $name = explode($delimiter, $name);
-
         $ret = $this->_data;
-        foreach ($name as $key) {
-            if (!isset($ret[$key])) return $default;
+        foreach (explode($delimiter, $name) as $key) {
+            if (!isset($ret[$key])) {
+                return $default;
+            }
             $ret = $ret[$key];
         }
 
@@ -65,14 +67,16 @@ class Cola_Config implements ArrayAccess
 
     public function set($name, $value, $delimiter = '.')
     {
-        $pos = & $this->_data;
+        $pos = &$this->_data;
         if (!is_string($delimiter) || false === strpos($name, $delimiter)) {
             $key = $name;
         } else {
             $name = explode($delimiter, $name);
             $cnt = count($name);
             for ($i = 0; $i < $cnt - 1; $i ++) {
-                if (!isset($pos[$name[$i]])) $pos[$name[$i]] = array();
+                if (!isset($pos[$name[$i]])) {
+                    $pos[$name[$i]] = array();
+                }
                 $pos = & $pos[$name[$i]];
             }
             $key = $name[$cnt - 1];
@@ -125,7 +129,6 @@ class Cola_Config implements ArrayAccess
         }
     }
 
-
     /**
      * Defined by Iterator interface
      *
@@ -155,10 +158,10 @@ class Cola_Config implements ArrayAccess
      * @param array $arr2
      * @return array
      */
-    protected function _merge($arr1, $arr2)
+    protected function _merge(array $arr1, array $arr2)
     {
-        foreach($arr2 as $key => $value) {
-            if(isset($arr1[$key]) && is_array($value)) {
+        foreach ($arr2 as $key => $value) {
+            if (isset($arr1[$key]) && is_array($value)) {
                 $arr1[$key] = $this->_merge($arr1[$key], $arr2[$key]);
             } else {
                 $arr1[$key] = $value;
@@ -211,4 +214,5 @@ class Cola_Config implements ArrayAccess
     {
         return $this->set($offset, null);
     }
+
 }

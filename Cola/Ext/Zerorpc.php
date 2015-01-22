@@ -1,12 +1,11 @@
 <?php
+
 class Cola_Ext_Zerorpc
 {
+
     protected $_zmq;
-
     public $timeout = 1000;
-
-    public $sleep   = 1;
-
+    public $sleep = 1;
     public $error = array();
 
     /**
@@ -83,7 +82,7 @@ class Cola_Ext_Zerorpc
      */
     protected function _receive()
     {
-        $times = ceil($this->timeout/$this->sleep);
+        $times = ceil($this->timeout / $this->sleep);
 
         for ($i = 0; $i < $times; $i ++) {
             try {
@@ -128,4 +127,5 @@ class Cola_Ext_Zerorpc
     {
         return msgpack_unpack($str);
     }
+
 }

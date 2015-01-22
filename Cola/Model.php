@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Model
 {
+
     const ERROR_VALIDATE_CODE = -400;
 
     /**
@@ -228,7 +230,7 @@ abstract class Cola_Model
 
         $regName = "_cola_db_{$name}";
         if (!$db = Cola::getReg($regName)) {
-            $config = (array)Cola::getConfig($name) + array('adapter' => 'Pdo_Mysql');
+            $config = (array) Cola::getConfig($name) + array('adapter' => 'Pdo_Mysql');
             $db = Cola::factory('Cola_Ext_Db', $config);
             Cola::setReg($regName, $db);
         }
@@ -252,7 +254,7 @@ abstract class Cola_Model
 
         $regName = "_cola_cache_{$name}";
         if (!$cache = Cola::getReg($regName)) {
-            $config = (array)Cola::getConfig($name);
+            $config = (array) Cola::getConfig($name);
             $cache = Cola::factory('Cola_Ext_Cache', $config);
             Cola::setReg($regName, $cache);
         }
@@ -348,7 +350,8 @@ abstract class Cola_Model
                 return $this->config;
 
             default:
-                throw new Cola_Exception('Undefined property: ' . get_class($this). '::' . $key);
+                throw new Cola_Exception('Undefined property: ' . get_class($this) . '::' . $key);
         }
     }
+
 }

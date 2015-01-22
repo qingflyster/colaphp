@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  */
-
 class Cola_View
 {
+
     /**
      * Base path of views
      *
@@ -86,10 +87,10 @@ class Cola_View
                 return htmlentities($str, ENT_QUOTES, $encoding);
 
             case 'javascript':
-                return strtr($str, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
+                return strtr($str, array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
 
             case 'mail':
-                return str_replace(array('@', '.'),array(' [AT] ', ' [DOT] '), $str);
+                return str_replace(array('@', '.'), array(' [AT] ', ' [DOT] '), $str);
 
             default:
                 return $str;
@@ -109,7 +110,7 @@ class Cola_View
     public static function truncate($str, $limit, $encoding = 'UTF-8', $suffix = '...', $regex = null)
     {
         if (function_exists('mb_strwidth')) {
-            return  self::mbTruncate($str, $limit, $encoding, $suffix);
+            return self::mbTruncate($str, $limit, $encoding, $suffix);
         }
         return self::regexTruncate($str, $limit, $encoding, $suffix, $regex = null);
     }
@@ -125,7 +126,8 @@ class Cola_View
      */
     public static function mbTruncate($str, $limit, $encoding = 'UTF-8', $suffix = '...')
     {
-        if (mb_strwidth($str, $encoding) <= $limit) return $str;
+        if (mb_strwidth($str, $encoding) <= $limit)
+            return $str;
 
         $limit -= mb_strwidth($suffix, $encoding);
         $tmp = mb_strimwidth($str, 0, $limit, '', $encoding);
@@ -145,10 +147,10 @@ class Cola_View
     public static function regexTruncate($str, $limit, $encoding = 'UTF-8', $suffix = '...', $regex = null)
     {
         $defaultRegex = array(
-            'UTF-8'  => "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/",
+            'UTF-8' => "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/",
             'GB2312' => "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/",
-            'GBK'    => "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/",
-            'BIG5'   => "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/"
+            'GBK' => "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/",
+            'BIG5' => "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/"
         );
 
         $encoding = strtoupper($encoding);
@@ -166,11 +168,13 @@ class Cola_View
 
         foreach ($match[0] as $word) {
             $len += strlen($word) > 1 ? 2 : 1;
-            if ($len > $trueLimit) continue;
+            if ($len > $trueLimit)
+                continue;
             $pos ++;
         }
-        if ($len <= $limit) return $str;
-        return join("",array_slice($match[0], 0, $pos)) . $suffix;
+        if ($len <= $limit)
+            return $str;
+        return join("", array_slice($match[0], 0, $pos)) . $suffix;
     }
 
     /**
@@ -200,4 +204,5 @@ class Cola_View
                 return null;
         }
     }
+
 }

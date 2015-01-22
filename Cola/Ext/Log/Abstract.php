@@ -1,18 +1,19 @@
 <?php
+
 /**
  *
  */
-
 abstract class Cola_Ext_Log_Abstract
 {
-    const EMERG   = 0;  // Emergency: system is unusable
-    const ALERT   = 1;  // Alert: action must be taken immediately
-    const CRIT    = 2;  // Critical: critical conditions
-    const ERR     = 3;  // Error: error conditions
-    const WARN    = 4;  // Warning: warning conditions
-    const NOTICE  = 5;  // Notice: normal but significant condition
-    const INFO    = 6;  // Informational: informational messages
-    const DEBUG   = 7;  // Debug: debug messages
+
+    const EMERG = 0;  // Emergency: system is unusable
+    const ALERT = 1;  // Alert: action must be taken immediately
+    const CRIT = 2;  // Critical: critical conditions
+    const ERR = 3;  // Error: error conditions
+    const WARN = 4;  // Warning: warning conditions
+    const NOTICE = 5;  // Notice: normal but significant condition
+    const INFO = 6;  // Informational: informational messages
+    const DEBUG = 7;  // Debug: debug messages
 
     protected $_options = array(
         'mode' => '0755',
@@ -22,7 +23,7 @@ abstract class Cola_Ext_Log_Abstract
 
     public function __construct($options = array())
     {
-        foreach ($options as $key=>$value) {
+        foreach ($options as $key => $value) {
             $this->_options[$key] = $value;
         }
     }
@@ -49,7 +50,7 @@ abstract class Cola_Ext_Log_Abstract
             '%event%' => $this->_getEvent($log, $defaultEvent),
             '%msg%' => $this->_getMsg($log)
         );
-        $text = str_replace(array('%time%', '%event%', '%msg%'), $data,$this->_options['format']);
+        $text = str_replace(array('%time%', '%event%', '%msg%'), $data, $this->_options['format']);
 
         return $text;
     }

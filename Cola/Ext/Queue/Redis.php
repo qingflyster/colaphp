@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cola_Ext_Queue_Redis
  *
@@ -6,6 +7,7 @@
  */
 class Cola_Ext_Queue_Redis extends Cola_Ext_Queue_Abstract
 {
+
     protected $_redis;
 
     public function __construct($params)
@@ -31,7 +33,7 @@ class Cola_Ext_Queue_Redis extends Cola_Ext_Queue_Abstract
         if (0 > $timeout) {
             return $this->_redis->rPop($this->_name);
         } else {
-            $data = $this->_redis->brPop((array)$this->_name, $timeout);
+            $data = $this->_redis->brPop((array) $this->_name, $timeout);
             return isset($data[1]) ? $data[1] : false;
         }
     }
@@ -46,9 +48,11 @@ class Cola_Ext_Queue_Redis extends Cola_Ext_Queue_Abstract
         $ret = array();
         for ($i = 0; $i < $limit; $i ++) {
             $item = $this->get($timeout);
-            if (false === $item) break;
+            if (false === $item)
+                break;
             $ret[] = $item;
         }
         return $ret;
     }
+
 }

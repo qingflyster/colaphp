@@ -1,6 +1,8 @@
 <?php
+
 Class Cola_Ext_Mongo
 {
+
     protected $_mongo;
     protected $_db;
 
@@ -11,7 +13,7 @@ Class Cola_Ext_Mongo
      */
     public function __construct($config = array())
     {
-        $config = (array)$config + array('server' => 'mongodb://localhost:27017', 'options' => array('connect' => true));
+        $config = (array) $config + array('server' => 'mongodb://localhost:27017', 'options' => array('connect' => true));
 
         extract($config);
 
@@ -21,7 +23,8 @@ Class Cola_Ext_Mongo
             $this->_db = $this->db($database);
         }
 
-        if (isset($user) && isset($password)) $this->auth($user, $password);
+        if (isset($user) && isset($password))
+            $this->auth($user, $password);
     }
 
     /**
@@ -94,7 +97,7 @@ Class Cola_Ext_Mongo
      * @param array $query
      * @param array $options
      * @return mixed
-     **/
+     * */
     public function find($collection, $query = array(), $options = array())
     {
         $options += array('fields' => array(), 'sort' => array(), 'skip' => 0, 'limit' => 0, 'cursor' => false, 'tailable' => false);
@@ -103,12 +106,17 @@ Class Cola_Ext_Mongo
         $collection = $this->collection($collection);
         $cur = $collection->find($query, $fields);
 
-        if ($sort) $cur->sort($sort);
-        if ($skip) $cur->skip($skip);
-        if ($limit) $cur->limit($limit);
-        if ($tailable) $cur->tailable($tailable);
+        if ($sort)
+            $cur->sort($sort);
+        if ($skip)
+            $cur->skip($skip);
+        if ($limit)
+            $cur->limit($limit);
+        if ($tailable)
+            $cur->tailable($tailable);
 
-        if ($cursor) return $cur;
+        if ($cursor)
+            return $cur;
 
         return iterator_to_array($cur);
     }
@@ -133,8 +141,9 @@ Class Cola_Ext_Mongo
      * @param string $collection
      * @param array $query
      * @return integer
-     **/
-    public function count($collection, array $query = array()) {
+     * */
+    public function count($collection, array $query = array())
+    {
         $res = $this->collection($collection);
 
         if ($query) {
@@ -150,8 +159,9 @@ Class Cola_Ext_Mongo
      * @param string $collection
      * @param array $data
      * @return boolean
-     **/
-    public function save($collection, $data) {
+     * */
+    public function save($collection, $data)
+    {
         return $this->collection($collection)->save($data);
     }
 
@@ -161,8 +171,9 @@ Class Cola_Ext_Mongo
      * @param string $collection
      * @param array $data
      * @return boolean
-     **/
-    public function insert($collection,$data, $options = array()) {
+     * */
+    public function insert($collection, $data, $options = array())
+    {
         return $this->collection($collection)->insert($data, $options);
     }
 
@@ -209,7 +220,8 @@ Class Cola_Ext_Mongo
      * @param string $options
      * @return void
      */
-    public function findAndModify($collection, $options = array()) {
+    public function findAndModify($collection, $options = array())
+    {
         $result = $this->_db->command(array('findAndModify' => $collection) + $options);
         return $result['ok'] ? $result['value'] : $result;
     }
@@ -251,7 +263,8 @@ Class Cola_Ext_Mongo
      */
     public static function Timestamp($sec = null, $inc = 0)
     {
-        if (empty($sec)) $sec = time();
+        if (empty($sec))
+            $sec = time();
         return new MongoTimestamp($sec, $inc);
     }
 
@@ -274,4 +287,5 @@ Class Cola_Ext_Mongo
     {
         return $this->_db->lastError();
     }
+
 }

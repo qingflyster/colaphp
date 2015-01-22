@@ -1,31 +1,34 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
 {
-	/**
-	 * Create a PDO object and connects to the database.
-	 *
-	 * @param array $config
-	 * @return resource
-	 */
-	public function connect()
-	{
-	    if ($this->ping(false)) {
+
+    /**
+     * Create a PDO object and connects to the database.
+     *
+     * @param array $config
+     * @return resource
+     */
+    public function connect()
+    {
+        if ($this->ping(false)) {
             return $this->conn;
         }
 
-	    if ($this->config['persistent']) {
-	        $this->config['options'][PDO::ATTR_PERSISTENT] = true;
-	    }
+        if ($this->config['persistent']) {
+            $this->config['options'][PDO::ATTR_PERSISTENT] = true;
+        }
 
-	    $this->conn = new PDO($this->_dsn($this->config), $this->config['user'], $this->config['password'], $this->config['options']);
-	    if ($this->config['charset']) $this->query("SET NAMES '{$this->config['charset']}';");
-	    return $this->conn;
-	}
+        $this->conn = new PDO($this->_dsn($this->config), $this->config['user'], $this->config['password'], $this->config['options']);
+        if ($this->config['charset'])
+            $this->query("SET NAMES '{$this->config['charset']}';");
+        return $this->conn;
+    }
 
-	/**
+    /**
      * Select Database
      *
      * @param string $database
@@ -129,55 +132,56 @@ abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
         return $result;
     }
 
-	/**
-	 * Initiate a transaction
-	 *
-	 * @return boolean
-	 */
-	public function beginTransaction()
-	{
-		return $this->conn->beginTransaction();
-	}
+    /**
+     * Initiate a transaction
+     *
+     * @return boolean
+     */
+    public function beginTransaction()
+    {
+        return $this->conn->beginTransaction();
+    }
 
-	/**
-	 * Commit a transaction
-	 *
-	 * @return boolean
-	 */
-	public function commit()
-	{
-		return $this->conn->commit();
-	}
+    /**
+     * Commit a transaction
+     *
+     * @return boolean
+     */
+    public function commit()
+    {
+        return $this->conn->commit();
+    }
 
-	/**
-	 * Roll back a transaction
-	 *
-	 * @return boolean
-	 */
-	public function rollBack()
-	{
-		return $this->conn->rollBack();
-	}
+    /**
+     * Roll back a transaction
+     *
+     * @return boolean
+     */
+    public function rollBack()
+    {
+        return $this->conn->rollBack();
+    }
 
-	/**
-	 * Get the last inserted ID.
-	 *
-	 * @param string $tableName
-	 * @param string $primaryKey
-	 * @return integer
-	 */
-	public function lastInsertId($tableName = null, $primaryKey = null)
-	{
-		return $this->conn->lastInsertId();
-	}
+    /**
+     * Get the last inserted ID.
+     *
+     * @param string $tableName
+     * @param string $primaryKey
+     * @return integer
+     */
+    public function lastInsertId($tableName = null, $primaryKey = null)
+    {
+        return $this->conn->lastInsertId();
+    }
 
-	/**
+    /**
      * Escape string
      *
      * @param string $str
      * @return string
      */
-	public function escape($str) {
+    public function escape($str)
+    {
         return addslashes($str);
     }
 
@@ -219,4 +223,5 @@ abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
 
         return false;
     }
+
 }

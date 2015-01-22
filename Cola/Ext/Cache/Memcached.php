@@ -2,12 +2,13 @@
 
 class Cola_Ext_Cache_Memcached extends Cola_Ext_Cache_Abstract
 {
+
     /**
      * Constructor
      *
      * @param array $options
      */
-    public function __construct($options=array())
+    public function __construct($options = array())
     {
         parent::__construct($options);
 
@@ -47,4 +48,5 @@ class Cola_Ext_Cache_Memcached extends Cola_Ext_Cache_Abstract
     {
         return is_array($id) ? $this->conn->getMulti($id) : $this->conn->get($id);
     }
+
 }

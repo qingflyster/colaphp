@@ -1,24 +1,26 @@
 <?php
+
 /**
  * Test
-class TestDaemon extends Cola_Ext_Daemon
-{
-    protected $_options = array(
-        'maxTimes' => 3
-    );
-    public function main()
-    {
-        file_put_contents('/tmp/TestDaemon.txt', date('Y-m-d H:i:s') . "\n", FILE_APPEND | LOCK_EX);
-        sleep(5);
-    }
-}
+  class TestDaemon extends Cola_Ext_Daemon
+  {
+  protected $_options = array(
+  'maxTimes' => 3
+  );
+  public function main()
+  {
+  file_put_contents('/tmp/TestDaemon.txt', date('Y-m-d H:i:s') . "\n", FILE_APPEND | LOCK_EX);
+  sleep(5);
+  }
+  }
 
-$daemon = new TestDaemon();
-$daemon->run();
+  $daemon = new TestDaemon();
+  $daemon->run();
  *
  */
 abstract class Cola_Ext_Daemon
 {
+
     const LOG_ECHO = 1;
     const LOG_FILE = 2;
 
@@ -56,7 +58,6 @@ abstract class Cola_Ext_Daemon
      * @var int
      */
     protected $_pid;
-
     protected $_exit = false;
 
     public function __construct()
@@ -112,7 +113,8 @@ abstract class Cola_Ext_Daemon
      */
     public function pid()
     {
-        if (!file_exists($this->_options['pid'])) return false;
+        if (!file_exists($this->_options['pid']))
+            return false;
         $pid = intval(file_get_contents($this->_options['pid']));
         return file_exists("/proc/{$pid}") ? $pid : false;
     }
@@ -138,14 +140,14 @@ abstract class Cola_Ext_Daemon
         declare(ticks = 1) {
             while (!$this->_exit) {
                 $this->_autoRestart();
-            	$this->_todo();
-                if ($this->_exit) break;
+                $this->_todo();
+                if ($this->_exit)
+                    break;
                 try {
                     $this->main();
                 } catch (Exception $e) {
                     $this->log($e->getMessage(), self::LOG_FILE);
                 }
-
             }
         }
     }
@@ -271,8 +273,8 @@ abstract class Cola_Ext_Daemon
         $this->_sigHandlers += array(
             SIGTERM => array($this, 'defaultSigHandler'),
             SIGQUIT => array($this, 'defaultSigHandler'),
-            SIGINT  => array($this, 'defaultSigHandler'),
-            SIGHUP  => array($this, 'defaultSigHandler'),
+            SIGINT => array($this, 'defaultSigHandler'),
+            SIGHUP => array($this, 'defaultSigHandler'),
         );
 
         foreach ($this->_sigHandlers as $signo => $callback) {
@@ -398,9 +400,8 @@ abstract class Cola_Ext_Daemon
     protected function _autoRestart()
     {
         if (
-            (0 !== $this->_options['maxTimes'] && $this->_cnt >= $this->_options['maxTimes'])
-            || (0 !== $this->_options['maxMemory'] && memory_get_usage(true) >= $this->_options['maxMemory'])
-           ) {
+                (0 !== $this->_options['maxTimes'] && $this->_cnt >= $this->_options['maxTimes']) || (0 !== $this->_options['maxMemory'] && memory_get_usage(true) >= $this->_options['maxMemory'])
+        ) {
             $this->_todos[] = array(array($this, '_restart'));
             $this->_cnt = 0;
         }
@@ -428,4 +429,5 @@ abstract class Cola_Ext_Daemon
             unlink($this->_options['pid']);
         }
     }
+
 }

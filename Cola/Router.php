@@ -1,13 +1,15 @@
 <?php
+
 /**
  *
  */
 class Cola_Router
 {
+
     public $enableDynamicMatch = true;
     public $defaultDynamicRule = array(
         'controller' => 'IndexController',
-        'action'     => 'indexAction'
+        'action' => 'indexAction'
     );
 
     /**
@@ -21,7 +23,10 @@ class Cola_Router
      * Constructor
      *
      */
-    public function __construct() {}
+    public function __construct()
+    {
+
+    }
 
     /**
      * Dynamic Match
@@ -90,4 +95,5 @@ class Cola_Router
         }
         return false;
     }
+
 }

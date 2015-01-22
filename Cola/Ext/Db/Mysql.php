@@ -1,10 +1,11 @@
 <?php
+
 /**
  *
  */
-
 class Cola_Ext_Db_Mysql extends Cola_Ext_Db_Abstract
 {
+
     /**
      * Connect to MySQL
      *
@@ -24,8 +25,10 @@ class Cola_Ext_Db_Mysql extends Cola_Ext_Db_Abstract
         $this->conn = @$func("{$this->config['host']}:{$this->config['port']}", $this->config['user'], $this->config['password']);
 
         if (is_resource($this->conn)) {
-            if ($this->config['database']) $this->selectDb($this->config['database']);
-            if ($this->config['charset']) $this->query("SET NAMES '{$this->config['charset']}';");
+            if ($this->config['database'])
+                $this->selectDb($this->config['database']);
+            if ($this->config['charset'])
+                $this->query("SET NAMES '{$this->config['charset']}';");
             return $this->conn;
         }
 
@@ -231,9 +234,10 @@ class Cola_Ext_Db_Mysql extends Cola_Ext_Db_Abstract
         if ($reconnect) {
             $this->close();
             $this->connect();
-            return  mysql_ping($this->conn);
+            return mysql_ping($this->conn);
         }
 
         return false;
     }
+
 }

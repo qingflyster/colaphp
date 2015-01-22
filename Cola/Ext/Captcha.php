@@ -1,30 +1,32 @@
 <?php
+
 /**
  *
  */
 class Cola_Ext_Captcha
 {
+
     /**
      * Captch config
      *
      * @var array
      */
     public $config = array(
-        'type'            => 'png',
-        'seed'            => '34678ABCDEFGHJKLMNPQRTUVWXYabcdefhjkmnpwxy',
-        'fonts'           => array('c:\windows\fonts\times.ttf'),
-        'size'            => 20,
-        'padding'         => 5,
-        'space'           => 5,                // Space between chars
-        'width'           => 100,
-        'height'          => 35,
-        'length'          => 4,                //Num of chars in captcha
-        'bgColor'         => '#f8f8f8',
-        'ttl'             => 90,
-        'minPoints'       => 256,
-        'maxPoints'       => 512,
+        'type' => 'png',
+        'seed' => '34678ABCDEFGHJKLMNPQRTUVWXYabcdefhjkmnpwxy',
+        'fonts' => array('c:\windows\fonts\times.ttf'),
+        'size' => 20,
+        'padding' => 5,
+        'space' => 5, // Space between chars
+        'width' => 100,
+        'height' => 35,
+        'length' => 4, //Num of chars in captcha
+        'bgColor' => '#f8f8f8',
+        'ttl' => 90,
+        'minPoints' => 256,
+        'maxPoints' => 512,
         'sessionValueKey' => '_COLA_CAPTCHA_VALUE_',
-        'sessionTtlKey'   => '_COLA_CAPTCHA_TTL_',
+        'sessionTtlKey' => '_COLA_CAPTCHA_TTL_',
     );
 
     /**
@@ -84,22 +86,21 @@ class Cola_Ext_Captcha
         $this->_image = imagecreate($this->config['width'], $this->config['height']);
 
         imageFilledRectangle(
-            $this->_image, 0, 0, $this->config['width'],
-            $this->config['height'], $this->_color($this->config['bgColor'])
+                $this->_image, 0, 0, $this->config['width'], $this->config['height'], $this->_color($this->config['bgColor'])
         );
 
-        $seed  = $this->_seed();
+        $seed = $this->_seed();
         $fonts = $this->_fonts();
 
         $_SESSION[$this->config['sessionValueKey']] = $seed;
-        $_SESSION[$this->config['sessionTtlKey']]   = time() + $this->config['ttl'];
+        $_SESSION[$this->config['sessionTtlKey']] = time() + $this->config['ttl'];
 
         for ($i = 0; $i < $this->config['length']; $i++) {
             $char = substr($seed, $i, 1);
             $x = $this->config['padding'] + $i * ($this->config['size'] + $this->config['space']);
             $y = mt_rand(0.7 * $this->config['height'], 0.9 * $this->config['height']);
             $charColor = imageColorAllocate($this->_image, mt_rand(50, 155), mt_rand(50, 155), mt_rand(50, 155));
-            imagettftext($this->_image, $this->config['size'], mt_rand(-18,18), $x, $y, $charColor, $fonts[$i], $char);
+            imagettftext($this->_image, $this->config['size'], mt_rand(-18, 18), $x, $y, $charColor, $fonts[$i], $char);
         }
 
         $this->_noise();
@@ -159,10 +160,10 @@ class Cola_Ext_Captcha
             imagesetpixel($this->_image, $x, $y, $color);
         }
 
-        $x1 = mt_rand($this->config['padding'], $this->config['width']/4);
-        $y1 = mt_rand($this->config['height']/4, 3 * $this->config['height']/4);
-        $x2 = mt_rand($this->config['width']/2 + $x1, $this->config['width'] - $this->config['padding']);
-        $y2 = mt_rand($this->config['height']/4, 3 * $this->config['height']/4);
+        $x1 = mt_rand($this->config['padding'], $this->config['width'] / 4);
+        $y1 = mt_rand($this->config['height'] / 4, 3 * $this->config['height'] / 4);
+        $x2 = mt_rand($this->config['width'] / 2 + $x1, $this->config['width'] - $this->config['padding']);
+        $y2 = mt_rand($this->config['height'] / 4, 3 * $this->config['height'] / 4);
 
         imagesetthickness($this->_image, 2);
         imageline($this->_image, $x1, $y1, $x2, $y2, mt_rand(0, 255));
@@ -182,7 +183,7 @@ class Cola_Ext_Captcha
             return false;
         }
 
-        $expireTime  = $_SESSION[$this->config['sessionTtlKey']];
+        $expireTime = $_SESSION[$this->config['sessionTtlKey']];
         $captchaCode = $_SESSION[$this->config['sessionValueKey']];
 
         // clear
@@ -203,4 +204,5 @@ class Cola_Ext_Captcha
 
         return true;
     }
+
 }

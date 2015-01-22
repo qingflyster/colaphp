@@ -1,24 +1,25 @@
 <?php
+
 /**
  *
  */
-
 abstract class Cola_Ext_Db_Abstract
 {
+
     /**
      * Configuration
      *
      * @var array
      */
     public $config = array(
-        'host'       => '127.0.0.1',
-        'port'       => 3306,
-        'user'       => 'test',
-        'password'   => '',
-        'database'   => 'test',
-        'charset'    => 'utf8',
+        'host' => '127.0.0.1',
+        'port' => 3306,
+        'user' => 'test',
+        'password' => '',
+        'database' => 'test',
+        'charset' => 'utf8',
         'persistent' => false,
-        'options'    => array()
+        'options' => array()
     );
 
     /**

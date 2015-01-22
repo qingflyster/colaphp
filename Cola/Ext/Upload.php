@@ -1,28 +1,29 @@
 <?php
+
 /**
  *
  */
-
 class Cola_Ext_Upload
 {
+
     /**
      * Upload config
      *
      * @var array
      */
     public $config = array(
-        'savePath'     => '/tmp',
-        'minSize'      => -1,
-        'maxSize'      => -1,
-        'minWidth'     => -1,
-        'maxWidth'     => -1,
-        'minHeight'    => -1,
-        'maxHeight'    => -1,
-        'allowedExts'  => '*',
+        'savePath' => '/tmp',
+        'minSize' => -1,
+        'maxSize' => -1,
+        'minWidth' => -1,
+        'maxWidth' => -1,
+        'minHeight' => -1,
+        'maxHeight' => -1,
+        'allowedExts' => '*',
         'allowedTypes' => '*',
-        'imageExts'    => array('.png', '.jpg', '.gif', '.jpeg'),
-        'override'     => false,
-        'error'        => array(
+        'imageExts' => array('.png', '.jpg', '.gif', '.jpeg'),
+        'override' => false,
+        'error' => array(
             1 => 'Exceeds upload_max_filesize',
             2 => 'Exceeds MAX_FILE_SIZE',
             3 => 'Partially uploaded',
@@ -68,24 +69,28 @@ class Cola_Ext_Upload
      */
     public function files()
     {
-        if ($this->files) return $this->files;
+        if ($this->files)
+            return $this->files;
 
         $files = array();
 
         foreach ($_FILES as $field => $data) {
-            if (empty($data['name'])) continue;
+            if (empty($data['name']))
+                continue;
             if (is_string($data['name'])) {
-                $files[] = $data + array('field' => $field, 'ext'  => $this->getExt($data['name'], true));
+                $files[] = $data + array('field' => $field, 'ext' => $this->getExt($data['name'], true));
                 continue;
             }
 
-            if (!is_array($data['name'])) continue;
+            if (!is_array($data['name']))
+                continue;
 
             $cnt = count($data['name']);
             $keys = array('name', 'type', 'tmp_name', 'error', 'size');
 
             for ($i = 0; $i < $cnt; $i++) {
-                if (empty($data['name'][$i])) continue;
+                if (empty($data['name'][$i]))
+                    continue;
                 $row = array();
                 foreach ($keys as $key) {
                     if (!isset($data[$key][$i])) {
@@ -102,7 +107,8 @@ class Cola_Ext_Upload
         }
 
         foreach ($files as $file) {
-            if ($this->check($file)) continue;
+            if ($this->check($file))
+                continue;
             $files = array();
             break;
         }
@@ -123,7 +129,7 @@ class Cola_Ext_Upload
         $ret = array();
 
         foreach ($this->files as $file) {
-            $name = is_callable($namedBy, true) ?  call_user_func($namedBy, $file) : null;
+            $name = is_callable($namedBy, true) ? call_user_func($namedBy, $file) : null;
 
             if ($tmp = $this->move($file, $name)) {
                 $ret[] = $tmp;
@@ -153,7 +159,8 @@ class Cola_Ext_Upload
      */
     public function move($file, $name = null)
     {
-        if (null === $name) $name = $file['name'];
+        if (null === $name)
+            $name = $file['name'];
 
         $full = $this->config['savePath'] . DIRECTORY_SEPARATOR . $name;
 
@@ -195,9 +202,9 @@ class Cola_Ext_Upload
         }
 
         $checks = array(
-            'checkType'      => array('code' => -21, 'msg' => "{$file['name']}: File type not allowed"),
-            'checkExt'       => array('code' => -22, 'msg' => "{$file['name']}: File ext not allowed"),
-            'checkFileSize'  => array('code' => -23, 'msg' => "{$file['name']}: File size not allowed"),
+            'checkType' => array('code' => -21, 'msg' => "{$file['name']}: File type not allowed"),
+            'checkExt' => array('code' => -22, 'msg' => "{$file['name']}: File ext not allowed"),
+            'checkFileSize' => array('code' => -23, 'msg' => "{$file['name']}: File size not allowed"),
             'checkImageSize' => array('code' => -24, 'msg' => "{$file['name']}: Image size not allowed"),
         );
 
@@ -220,11 +227,12 @@ class Cola_Ext_Upload
     public function getImageSize($name)
     {
         if (function_exists('getimagesize')) {
-			$size = @getimagesize($name);
-			if (!empty($size)) return array($size[0], $size[1]);
-		}
+            $size = @getimagesize($name);
+            if (!empty($size))
+                return array($size[0], $size[1]);
+        }
 
-		return false;
+        return false;
     }
 
     /**
@@ -290,10 +298,7 @@ class Cola_Ext_Upload
         if (!in_array($file['ext'], $this->config['imageExts'])) {
             return true;
         }
-        return ($size = $this->getImageSize($file['tmp_name']))
-            && ((-1 === $this->config['minWidth'])  || $size[0] >= $this->config['minWidth'])
-            && ((-1 === $this->config['maxWidth'])  || $size[0] <= $this->config['maxWidth'])
-            && ((-1 === $this->config['minHeight']) || $size[1] >= $this->config['minHeight'])
-            && ((-1 === $this->config['maxHeight']) || $size[1] <= $this->config['maxHeight']);
+        return ($size = $this->getImageSize($file['tmp_name'])) && ((-1 === $this->config['minWidth']) || $size[0] >= $this->config['minWidth']) && ((-1 === $this->config['maxWidth']) || $size[0] <= $this->config['maxWidth']) && ((-1 === $this->config['minHeight']) || $size[1] >= $this->config['minHeight']) && ((-1 === $this->config['maxHeight']) || $size[1] <= $this->config['maxHeight']);
     }
+
 }

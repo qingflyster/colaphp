@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 class Cola_Response
 {
+
     static protected $statusTexts = array(
         '100' => 'Continue',
         '101' => 'Switching Protocols',
@@ -49,12 +51,12 @@ class Cola_Response
     );
 
     /**
-    * Sets response status code.
-    *
-    * @param string $code  HTTP status code
-    * @param string $name  HTTP status text
-    *
-    */
+     * Sets response status code.
+     *
+     * @param string $code  HTTP status code
+     * @param string $name  HTTP status text
+     *
+     */
     public static function statusCode($code, $text = null)
     {
         $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
@@ -116,7 +118,8 @@ class Cola_Response
             echo "window.location.href=\"$url\";\n";
         }
         echo "</script>\n";
-        if ($url) exit();
+        if ($url)
+            exit();
     }
 
     /**
@@ -177,4 +180,5 @@ class Cola_Response
         $time = date('D, d M Y H:i:s', time() + $seconds) . ' GMT';
         header("Expires: $time");
     }
+
 }

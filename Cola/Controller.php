@@ -1,9 +1,11 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Controller
 {
+
     /**
      * Template file extension
      *
@@ -15,7 +17,10 @@ abstract class Cola_Controller
      * Constructor
      *
      */
-    public function __construct() {}
+    public function __construct()
+    {
+
+    }
 
     /**
      * Magic method
@@ -29,33 +34,33 @@ abstract class Cola_Controller
     }
 
     /**
-    * Get var
-    *
-    * @param string $key
-    * @param mixed $default
-    */
+     * Get var
+     *
+     * @param string $key
+     * @param mixed $default
+     */
     protected function get($key = null, $default = null)
     {
         return Cola_Request::get($key, $default);
     }
 
     /**
-    * Post var
-    *
-    * @param string $key
-    * @param mixed $default
-    */
+     * Post var
+     *
+     * @param string $key
+     * @param mixed $default
+     */
     protected function post($key = null, $default = null)
     {
         return Cola_Request::post($key, $default);
     }
 
     /**
-    * Param var
-    *
-    * @param string $key
-    * @param mixed $default
-    */
+     * Param var
+     *
+     * @param string $key
+     * @param mixed $default
+     */
     protected function param($key = null, $default = null)
     {
         return Cola_Request::param($key, $default);
@@ -96,9 +101,9 @@ abstract class Cola_Controller
         $dispatchInfo = Cola::getInstance()->dispatchInfo;
 
         $tpl = str_replace('_', DIRECTORY_SEPARATOR, substr($dispatchInfo['controller'], 0, -10))
-             . DIRECTORY_SEPARATOR
-             . substr($dispatchInfo['action'], 0, -6)
-             . $this->tplExt;
+                . DIRECTORY_SEPARATOR
+                . substr($dispatchInfo['action'], 0, -6)
+                . $this->tplExt;
 
         return $tpl;
     }
@@ -168,4 +173,5 @@ abstract class Cola_Controller
                 throw new Cola_Exception('Undefined property: ' . get_class($this) . '::' . $key);
         }
     }
+
 }

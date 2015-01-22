@@ -1,31 +1,32 @@
 <?php
+
 /**
  * usage
-$data = array(
-    'id'     => 8,
-    'sex'    => 'F',
-    'tags'   => array('foo' => 3, 'bar' => 7),
-    'age'    => 8,
-    'email'  => 'foo@bar.com',
-    'date'   => '2012-12-10',
-    'body'   => 'foobarbarfoo',
-);
+  $data = array(
+  'id'     => 8,
+  'sex'    => 'F',
+  'tags'   => array('foo' => 3, 'bar' => 7),
+  'age'    => 8,
+  'email'  => 'foo@bar.com',
+  'date'   => '2012-12-10',
+  'body'   => 'foobarbarfoo',
+  );
 
-$rules = array(
-    'id'     => array('required' => true, 'type' => 'int'),
-    'sex'    => array('in' => array('F', 'M')),
-    'tags'   => array('required' => true, 'each' => array('type' => 'int')),
-    'age'    => array('type' => 'int', 'range' => array(38, 130), 'msg' => 'age must be 18~130'),
-    'email'  => array('type' => 'email'),
-    'date'   => array('type' => 'date'),
-    'body'   => array('required' => true, 'range' => array(1, 500))
-);
+  $rules = array(
+  'id'     => array('required' => true, 'type' => 'int'),
+  'sex'    => array('in' => array('F', 'M')),
+  'tags'   => array('required' => true, 'each' => array('type' => 'int')),
+  'age'    => array('type' => 'int', 'range' => array(38, 130), 'msg' => 'age must be 18~130'),
+  'email'  => array('type' => 'email'),
+  'date'   => array('type' => 'date'),
+  'body'   => array('required' => true, 'range' => array(1, 500))
+  );
 
-var_dump(Cola_Ext_Validate::check($data, $rules));
-**/
-
+  var_dump(Cola_Ext_Validate::check($data, $rules));
+ * */
 class Cola_Ext_Validate
 {
+
     /**
      * Validate Errors
      *
@@ -268,9 +269,10 @@ class Cola_Ext_Validate
         $flag = true;
         foreach ($rule as $key => $val) {
             switch ($key) {
-            	case 'required':
-            		if ($val) $flag = self::notEmpty($data);
-            		break;
+                case 'required':
+                    if ($val)
+                        $flag = self::notEmpty($data);
+                    break;
 
                 case 'func':
                     $flag = call_user_func($val, $data);
@@ -294,11 +296,12 @@ class Cola_Ext_Validate
                 case 'each':
                     $val += array('required' => false);
                     foreach ($data as $item) {
-                        if (!$flag = self::_check($item, $val)) break;
+                        if (!$flag = self::_check($item, $val))
+                            break;
                     }
                     break;
-            	default:
-            		break;
+                default:
+                    break;
             }
             if (!$flag) {
                 return false;
@@ -307,4 +310,5 @@ class Cola_Ext_Validate
 
         return true;
     }
+
 }

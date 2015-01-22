@@ -2,12 +2,13 @@
 
 class Cola_Ext_Cache_Memcache extends Cola_Ext_Cache_Abstract
 {
+
     /**
      * Constructor
      *
      * @param array $options
      */
-    public function __construct($options=array())
+    public function __construct($options = array())
     {
         parent::__construct($options);
 
@@ -33,4 +34,5 @@ class Cola_Ext_Cache_Memcache extends Cola_Ext_Cache_Abstract
 
         return $this->conn->set($id, $data, empty($this->options['compressed']) ? 0 : MEMCACHE_COMPRESSED, $ttl);
     }
+
 }

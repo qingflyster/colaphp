@@ -1,11 +1,12 @@
 <?php
+
 /**
  *
  */
 abstract class Cola_Ext_Queue_Abstract
 {
-    protected $_params = array();
 
+    protected $_params = array();
     protected $_name = '_defaultQueue';
 
     /**
@@ -15,7 +16,7 @@ abstract class Cola_Ext_Queue_Abstract
      */
     public function __construct($params = array())
     {
-        foreach ($params as $key=>$value) {
+        foreach ($params as $key => $value) {
             $this->_params[$key] = $value;
         }
         if (isset($this->_params['name'])) {
