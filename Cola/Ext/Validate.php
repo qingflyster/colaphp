@@ -91,7 +91,7 @@ class Cola_Ext_Validate
      * Range
      *
      * @param mixed $value numbernic|string
-     * @param array $max
+     * @param array $range
      * @return boolean
      */
     public static function range($value, $range)
@@ -212,6 +212,43 @@ class Cola_Ext_Validate
     }
 
     /**
+     * 18中国位身份证有效验证
+     *
+     * @param string $idcard
+     * @return boolean
+     */
+    public static function idcard($idcard)
+    {
+        if (!isset($idcard{17})) {
+            return FALSE;
+        }
+
+        // 加权因子
+        $factor = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+
+        // 校验码对应值
+        $verifyNumberList = array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
+
+        $checksum = 0;
+        $i = 17;
+        while ($i--) {
+            $checksum += $idcard{$i} * $factor[$i];
+        }
+
+        return ($verifyNumberList[$checksum % 11] == strtoupper(substr($idcard, -1)));
+    }
+
+    /**
+     * 判断是否是手机号码
+     * @param string $phoneNumber 被检测的手机号码
+     * @return bool
+     */
+    public static function isMobileNumber($phoneNumber)
+    {
+        return (preg_match("/^(13[0-9]|147|15[0-9]|17[0-9]|18[0-9]|19[0-9])\d{8}$/", $phoneNumber)) ? TRUE : FALSE;
+    }
+
+    /**
      * Check
      *
      * $rules = array(
@@ -249,8 +286,10 @@ class Cola_Ext_Validate
             }
 
             if (isset($rule['rules'])) {
-                $this->check($data[$key], $rule['rules'], $ignorNotExists);
-                continue;
+                $tmp = $this->check($data[$key], $rule['rules'], $ignorNotExists);
+                if (0 !== $tmp['code']) {
+                    $this->errors[$key] = $tmp['msg'];
+                }
             }
         }
 
@@ -260,7 +299,7 @@ class Cola_Ext_Validate
     /**
      * Check value
      *
-     * @param mixed $value
+     * @param mixed $data
      * @param array $rule
      * @return mixed string as error, true for OK
      */
@@ -270,8 +309,9 @@ class Cola_Ext_Validate
         foreach ($rule as $key => $val) {
             switch ($key) {
                 case 'required':
-                    if ($val)
+                    if ($val) {
                         $flag = self::notEmpty($data);
+                    }
                     break;
 
                 case 'func':
@@ -296,8 +336,9 @@ class Cola_Ext_Validate
                 case 'each':
                     $val += array('required' => false);
                     foreach ($data as $item) {
-                        if (!$flag = self::_check($item, $val))
+                        if (!$flag = self::_check($item, $val)) {
                             break;
+                        }
                     }
                     break;
                 default:

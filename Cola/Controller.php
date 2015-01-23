@@ -19,13 +19,13 @@ abstract class Cola_Controller
      */
     public function __construct()
     {
-
+        
     }
 
     /**
      * Magic method
      *
-     * @param string $methodName
+     * @param string $method
      * @param array $args
      */
     public function __call($method, $args)
@@ -69,7 +69,7 @@ abstract class Cola_Controller
     /**
      * View
      *
-     * @param array $config
+     * @param array $viewsHome
      * @return Cola_View
      */
     protected function view($viewsHome = null)
@@ -99,8 +99,11 @@ abstract class Cola_Controller
     protected function defaultTemplate()
     {
         $dispatchInfo = Cola::getInstance()->dispatchInfo;
-
-        $tpl = str_replace('_', DIRECTORY_SEPARATOR, substr($dispatchInfo['controller'], 0, -10))
+        $aClassName = explode('_', substr($dispatchInfo['controller'], 0, -10));
+        foreach ($aClassName as $key => $value) {
+            $aClassName[$key] = ucfirst($value);
+        }
+        $tpl = implode(DIRECTORY_SEPARATOR, $aClassName)
                 . DIRECTORY_SEPARATOR
                 . substr($dispatchInfo['action'], 0, -6)
                 . $this->tplExt;
@@ -131,7 +134,7 @@ abstract class Cola_Controller
             $data = json_encode($data);
         }
         echo $var ? "var {$var}={$data};" : $data;
-        exit();
+        exit;
     }
 
     /**

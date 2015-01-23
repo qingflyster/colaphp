@@ -67,7 +67,7 @@ class Cola_Config implements ArrayAccess
 
     public function set($name, $value, $delimiter = '.')
     {
-        $pos = &$this->_data;
+        $pos = & $this->_data;
         if (!is_string($delimiter) || false === strpos($name, $delimiter)) {
             $key = $name;
         } else {
@@ -158,7 +158,7 @@ class Cola_Config implements ArrayAccess
      * @param array $arr2
      * @return array
      */
-    protected function _merge(array $arr1, array $arr2)
+    protected function _merge($arr1, $arr2)
     {
         foreach ($arr2 as $key => $value) {
             if (isset($arr1[$key]) && is_array($value)) {

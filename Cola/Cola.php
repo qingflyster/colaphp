@@ -75,7 +75,8 @@ class Cola
             ),
         ));
 
-        Cola::registerAutoload();
+        self::registerAutoload();
+        self::registerAutoload('Cola::autoLoadPsr0Class');
     }
 
     /**
@@ -223,6 +224,29 @@ class Cola
         return (class_exists($className, false) || interface_exists($className, false));
     }
 
+    public static function autoLoadPsr0Class($className, $classFile = null)
+    {
+        /**
+         * auto load Cola class
+         */
+        if (!$classFile) {
+            $aClassName = explode('_', $className);
+            foreach ($aClassName as $key => $value) {
+                $aClassName[$key] = ucfirst($value);
+            }
+            $classFile = dirname(self::getConfig('_controllersHome')) . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $aClassName) . '.php';
+        }
+
+        if (file_exists($classFile)) {
+            include $classFile;
+        }
+        if (class_exists($className, false) || interface_exists($className, false)) {
+            self::setConfig("_class.{$className}", $classFile);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * User define class path
      *
@@ -264,7 +288,7 @@ class Cola
         if ((null === $this->dispatchInfo) && $init) {
             $this->router || ($this->router = new Cola_Router());
 
-            $this->router->rules += self::getConfig('_urls') ? : array();
+            $this->router->rules += self::getConfig('_urls')? : array();
 
             $this->pathInfo || $this->pathInfo = (isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '');
 
@@ -292,8 +316,14 @@ class Cola
         }
 
         if (isset($dispatchInfo['controller'])) {
-            $classFile = self::getConfig('_controllersHome') . "/{$dispatchInfo['controller']}.php";
-            if (!self::loadClass($dispatchInfo['controller'], $classFile)) {
+            $controllersHone = self::getConfig('_controllersHome');
+            $classFile = "{$controllersHone}/{$dispatchInfo['controller']}.php";
+
+            if (self::loadClass($dispatchInfo['controller'], $classFile)) {
+
+            } elseif (self::autoLoadPsr0Class('Controllers_' . substr($dispatchInfo['controller'], 0, -10))) {
+                $dispatchInfo['controller'] = 'Controllers_' . substr($dispatchInfo['controller'], 0, -10);
+            } else {
                 throw new Cola_Exception_Dispatch("Can't load controller:{$dispatchInfo['controller']}");
             }
             $controller = new $dispatchInfo['controller']();

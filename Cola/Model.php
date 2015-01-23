@@ -58,6 +58,20 @@ abstract class Cola_Model
     public $error = array();
 
     /**
+     *
+     * @return \static
+     */
+    static public function init()
+    {
+        $regName = '_class' . get_called_class();
+        if (!$class = Cola::getReg($regName)) {
+            $class = new static();
+            Cola::setReg($regName, $class);
+        }
+        return $class;
+    }
+
+    /**
      * Load data
      *
      * @param int $id
@@ -65,13 +79,12 @@ abstract class Cola_Model
      */
     public function load($id, $col = null)
     {
-        is_null($col) && $col = $this->_pk;
+        $col || $col = $this->_pk;
 
         $sql = "select * from {$this->_table} where {$col} = '{$id}'";
 
         try {
-            $result = $this->db->row($sql);
-            return $result;
+            return $this->db->row($sql);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -84,15 +97,14 @@ abstract class Cola_Model
      * @param array $opts
      * @return array
      */
-    public function find($opts = array())
+    public function find(array $opts = array())
     {
         is_string($opts) && $opts = array('where' => $opts);
 
         $opts += array('table' => $this->_table);
 
         try {
-            $result = $this->db->find($opts);
-            return $result;
+            return $this->db->find($opts);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -108,13 +120,10 @@ abstract class Cola_Model
      */
     public function count($where, $table = null)
     {
-        if (is_null($table)) {
-            $table = $this->_table;
-        }
+        $table || $table = $this->_table;
 
         try {
-            $result = $this->db->count($where, $table);
-            return $result;
+            return $this->db->count($where, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -130,8 +139,7 @@ abstract class Cola_Model
     public function sql($sql)
     {
         try {
-            $result = $this->db->sql($sql);
-            return $result;
+            return $this->db->sql($sql);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -147,13 +155,9 @@ abstract class Cola_Model
      */
     public function insert($data, $table = null)
     {
-        if (is_null($table)) {
-            $table = $this->_table;
-        }
-
+        $table || $table = $this->_table;
         try {
-            $result = $this->db->insert($data, $table);
-            return $result;
+            return $this->db->insert($data, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -169,10 +173,10 @@ abstract class Cola_Model
      */
     public function update($id, $data)
     {
-        $where = $this->_pk . '=' . (is_int($id) ? $id : "'$id'");
+        $where = $this->_pk . '=' . (is_int($id) ? $id : "'{$id}'");
 
         try {
-            $result = $this->db->update($data, $where, $this->_table);
+            $this->db->update($data, $where, $this->_table);
             return true;
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
@@ -183,19 +187,19 @@ abstract class Cola_Model
     /**
      * Delete
      *
-     * @param string $where
-     * @param string $table
+     * @param string $id
+     * @param string $col
      * @return boolean
      */
-    public function delete($id, $col = null)
+    public function delete($id, $col = null, $table = null)
     {
-        is_null($col) && $col = $this->_pk;
+        $col || $col = $this->_pk;
+        $table || $table = $this->_table;
         $id = $this->escape($id);
         $where = "{$col} = '{$id}'";
 
         try {
-            $result = $this->db->delete($where, $this->_table);
-            return $result;
+            return $this->db->delete($where, $table);
         } catch (Exception $e) {
             $this->error = array('code' => $e->getCode(), 'msg' => $e->getMessage());
             return false;
@@ -218,11 +222,11 @@ abstract class Cola_Model
      *
      * @param array $config
      * @param string
-     * @return Cola_Ext_Db
+     * @return Cola_Ext_Db_Abstract
      */
     public function db($name = null)
     {
-        is_null($name) && $name = $this->_db;
+        $name || $name = $this->_db;
 
         if (is_array($name)) {
             return Cola::factory('Cola_Ext_Db', $name);
@@ -246,7 +250,7 @@ abstract class Cola_Model
      */
     public function cache($name = null)
     {
-        is_null($name) && ($name = $this->_cache);
+        $name || $name = $this->_cache;
 
         if (is_array($name)) {
             return Cola::factory('Cola_Ext_Cache', $name);
@@ -273,19 +277,17 @@ abstract class Cola_Model
      */
     public function cached($func, $args = array(), $ttl = null, $key = null)
     {
-        is_null($ttl) && ($ttl = $this->_ttl);
-
         if (!is_array($args)) {
             $args = array($args);
         }
 
-        if (is_null($key)) {
+        if (null === $key) {
             $key = get_class($this) . '-' . $func . '-' . sha1(serialize($args));
         }
 
         if (!$data = $this->cache->get($key)) {
             $data = call_user_func_array(array($this, $func), $args);
-            $this->cache->set($key, $data, $ttl);
+            $this->cache->set($key, $data, $ttl ? : $this->_ttl);
         }
 
         return $data;
@@ -294,14 +296,14 @@ abstract class Cola_Model
     /**
      * Validate
      *
-     * @param array $data
-     * @param boolean $ignoreNotExists
-     * @param array $rules
+     * @param array $data check data
+     * @param boolean $ignoreNotExists false not ignore, default false
+     * @param array $rules check rules
      * @return boolean
      */
     public function validate($data, $ignoreNotExists = false, $rules = null)
     {
-        is_null($rules) && $rules = $this->_validate;
+        $rules || $rules = $this->_validate;
         if (empty($rules)) {
             return true;
         }
@@ -316,6 +318,46 @@ abstract class Cola_Model
         }
 
         return true;
+    }
+
+    /**
+     * get validate config
+     * @return array
+     */
+    public function getValidate()
+    {
+        return $this->_validate;
+    }
+
+    /**
+     * set validata
+     * @param array $validate
+     * @return \Cola_Model
+     */
+    public function setValidate(array $validate)
+    {
+        $this->_validate = $validate;
+        return $this;
+    }
+
+    /**
+     * set db debug
+     * @param bool $debug default true
+     * @return $this
+     */
+    public function debug($debug = TRUE)
+    {
+        $this->db->debug = $debug;
+        return $this;
+    }
+
+    /**
+     * get db debug log
+     * @return array
+     */
+    public function debugLog()
+    {
+        return $this->db->log;
     }
 
     /**

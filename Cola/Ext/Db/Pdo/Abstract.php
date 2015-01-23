@@ -36,7 +36,7 @@ abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
      */
     public function selectDb($database)
     {
-        return $this->query("use $database;");
+        return $this->query("use {$database};");
     }
 
     /**
@@ -114,8 +114,7 @@ abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
      */
     public function fetch($type = 'ASSOC')
     {
-        $type = strtoupper($type);
-        return $this->query->fetch(self::_getFetchStyle($type));
+        return $this->query->fetch(self::_getFetchStyle(strtoupper($type)));
     }
 
     /**
@@ -126,8 +125,7 @@ abstract class Cola_Ext_Db_Pdo_Abstract extends Cola_Ext_Db_Abstract
      */
     public function fetchAll($type = 'ASSOC')
     {
-        $type = strtoupper($type);
-        $result = $this->query->fetchAll(self::_getFetchStyle($type));
+        $result = $this->query->fetchAll(self::_getFetchStyle(strtoupper($type)));
         $this->free();
         return $result;
     }

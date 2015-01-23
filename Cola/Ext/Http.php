@@ -61,7 +61,7 @@ class Cola_Ext_Http
     /**
      * HTTP request
      *
-     * @param string $uri
+     * @param string $url
      * @param array $params
      * @return string or throw Exception
      */

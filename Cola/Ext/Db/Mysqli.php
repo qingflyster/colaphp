@@ -25,13 +25,10 @@ class Cola_Ext_Db_Mysqli extends Cola_Ext_Db_Abstract
         }
 
         $this->conn = mysqli_init();
-        $connected = @mysqli_real_connect(
-                        $this->conn, $this->config['host'], $this->config['user'], $this->config['password'], $this->config['database'], $this->config['port']
-        );
+        $connected = @mysqli_real_connect($this->conn, $this->config['host'], $this->config['user'], $this->config['password'], $this->config['database'], $this->config['port']);
 
         if ($connected) {
-            if ($this->config['charset'])
-                $this->query("SET NAMES '{$this->config['charset']}';");
+            $this->config['charset'] && $this->query("SET NAMES '{$this->config['charset']}';");
             return $this->conn;
         }
 

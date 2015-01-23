@@ -26,8 +26,9 @@ class Cola_Ext_GoogleAuthenticator
      */
     public static function getCode($secret, $time = null)
     {
-        if (!$time)
+        if (!$time) {
             $time = floor(time() / 30);
+        }
         $secret = self::base32Decode($secret);
 
         $bin = pack('N*', 0) . pack('N*', $time);        // Counter must be 64-bit int

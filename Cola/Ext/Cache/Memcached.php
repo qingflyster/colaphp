@@ -25,17 +25,17 @@ class Cola_Ext_Cache_Memcached extends Cola_Ext_Cache_Abstract
      * Set cache
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed $data
      * @param int $ttl
      * @return boolean
      */
-    public function set($id, $data, $ttl = null)
+    public function set($key, $data, $ttl = null)
     {
         if (null === $ttl) {
             $ttl = $this->options['ttl'];
         }
 
-        return $this->conn->set($id, $data, $ttl);
+        return $this->conn->set($key, $data, $ttl);
     }
 
     /**

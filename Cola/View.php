@@ -19,9 +19,7 @@ class Cola_View
      */
     public function __construct($viewsHome = null)
     {
-        if (is_null($viewsHome)) {
-            $viewsHome = Cola::getConfig('_viewsHome');
-        }
+        $viewsHome || $viewsHome = Cola::getConfig('_viewsHome');
 
         if ($viewsHome) {
             $this->viewsHome = $viewsHome;
@@ -112,7 +110,7 @@ class Cola_View
         if (function_exists('mb_strwidth')) {
             return self::mbTruncate($str, $limit, $encoding, $suffix);
         }
-        return self::regexTruncate($str, $limit, $encoding, $suffix, $regex = null);
+        return self::regexTruncate($str, $limit, $encoding, $suffix, $regex);
     }
 
     /**
@@ -126,8 +124,9 @@ class Cola_View
      */
     public static function mbTruncate($str, $limit, $encoding = 'UTF-8', $suffix = '...')
     {
-        if (mb_strwidth($str, $encoding) <= $limit)
+        if (mb_strwidth($str, $encoding) <= $limit) {
             return $str;
+        }
 
         $limit -= mb_strwidth($suffix, $encoding);
         $tmp = mb_strimwidth($str, 0, $limit, '', $encoding);
@@ -156,7 +155,7 @@ class Cola_View
         $encoding = strtoupper($encoding);
 
         if (null === $regex && !isset($defaultRegex[$encoding])) {
-            throw new Exception("Truncate failed: not supported encoding, you should supply a regex for $encoding encoding");
+            throw new Exception("Truncate failed: not supported encoding, you should supply a regex for {$encoding} encoding");
         }
 
         $regex || $regex = $defaultRegex[$encoding];
@@ -168,12 +167,14 @@ class Cola_View
 
         foreach ($match[0] as $word) {
             $len += strlen($word) > 1 ? 2 : 1;
-            if ($len > $trueLimit)
+            if ($len > $trueLimit) {
                 continue;
+            }
             $pos ++;
         }
-        if ($len <= $limit)
+        if ($len <= $limit) {
             return $str;
+        }
         return join("", array_slice($match[0], 0, $pos)) . $suffix;
     }
 

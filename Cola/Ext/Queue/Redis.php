@@ -48,8 +48,9 @@ class Cola_Ext_Queue_Redis extends Cola_Ext_Queue_Abstract
         $ret = array();
         for ($i = 0; $i < $limit; $i ++) {
             $item = $this->get($timeout);
-            if (false === $item)
+            if (false === $item) {
                 break;
+            }
             $ret[] = $item;
         }
         return $ret;

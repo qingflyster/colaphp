@@ -71,7 +71,7 @@ class Cola_Ext_Captcha
         header("Cache-Control: no-store, no-cache, must-revalidate");
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");
-        header("Content-type: image/$type");
+        header("Content-type: image/{$type}");
 
         $func($this->_image);
         imagedestroy($this->_image);

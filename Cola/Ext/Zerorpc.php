@@ -19,12 +19,8 @@ class Cola_Ext_Zerorpc
     {
         $this->_zmq = new ZMQSocket(new ZMQContext(), ZMQ::SOCKET_REQ);
 
-        if (!is_null($timeout)) {
-            $this->timeout = $timeout;
-        }
-        if (!is_null($sleep)) {
-            $this->sleep = $sleep;
-        }
+        $timeout && $this->timeout = $timeout;
+        $sleep && $this->sleep = $sleep;
 
         $this->_zmq->setSockOpt(ZMQ::SOCKOPT_LINGER, $this->timeout);
         $this->_zmq->connect($server);

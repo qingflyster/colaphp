@@ -51,6 +51,13 @@ abstract class Cola_Ext_Db_Abstract
     public $log = array();
 
     /**
+     * last sql
+     *
+     * @var string
+     */
+    public $lastSql = '';
+
+    /**
      * Constructor.
      *
      * $config is an array of key/value pairs
@@ -82,17 +89,18 @@ abstract class Cola_Ext_Db_Abstract
      */
     public function query($sql)
     {
-        if (is_null($this->conn)) {
-            $this->connect();
-        }
+        $this->conn || $this->connect();
 
-        $log = $sql . '@' . date('Y-m-d H:i:s');
-        $this->log[] = $log;
+        $this->lastSql = $sql . '@' . date('Y-m-d H:i:s');
+        if ($this->debug) {
+            $this->log[] = $this->lastSql;
+        }
 
         if ($this->query = $this->_query($sql)) {
             return $this->query;
         }
 
+        $this->log[] = $this->lastSql;
         $this->_throwException();
     }
 
@@ -165,14 +173,14 @@ abstract class Cola_Ext_Db_Abstract
         }
 
         $opts = $opts + array(
-            'fileds' => '*',
+            'fields' => '*',
             'where' => 1,
             'order' => null,
             'start' => -1,
             'limit' => -1
         );
 
-        $sql = "select {$opts['fileds']} from {$opts['table']} where {$opts['where']}";
+        $sql = "select {$opts['fields']} from {$opts['table']} where {$opts['where']}";
 
         if ($opts['order']) {
             $sql .= " order by {$opts['order']}";
@@ -197,7 +205,7 @@ abstract class Cola_Ext_Db_Abstract
         $keys = array();
         $values = array();
         foreach ($data as $key => $value) {
-            $keys[] = "`$key`";
+            $keys[] = "`{$key}`";
             $values[] = "'" . $this->escape($value) . "'";
         }
         $keys = implode(',', $keys);
@@ -214,12 +222,12 @@ abstract class Cola_Ext_Db_Abstract
      * @param string $table
      * @return int
      */
-    public function update($data, $where = '0', $table)
+    public function update($data, $where, $table)
     {
         $tmp = array();
 
         foreach ($data as $key => $value) {
-            $tmp[] = "`$key`='" . $this->escape($value) . "'";
+            $tmp[] = "`{$key}`='" . $this->escape($value) . "'";
         }
 
         $str = implode(',', $tmp);
@@ -236,9 +244,9 @@ abstract class Cola_Ext_Db_Abstract
      * @param string $table
      * @return int
      */
-    public function delete($where = '0', $table)
+    public function delete($where, $table)
     {
-        $sql = "delete from $table where $where";
+        $sql = "delete from {$table} where {$where}";
         return $this->sql($sql);
     }
 
@@ -251,10 +259,10 @@ abstract class Cola_Ext_Db_Abstract
      */
     public function count($where, $table)
     {
-        $sql = "select count(1) as cnt from $table where $where";
+        $sql = "select count(1) as CNT from {$table} where {$where}";
         $this->query($sql);
         $result = $this->fetch();
-        return empty($result['cnt']) ? 0 : $result['cnt'];
+        return empty($result['CNT']) ? 0 : $result['CNT'];
     }
 
     /**

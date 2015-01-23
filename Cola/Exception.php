@@ -2,5 +2,5 @@
 
 class Cola_Exception extends Exception
 {
-
+    
 }

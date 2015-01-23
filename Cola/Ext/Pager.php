@@ -35,7 +35,7 @@ class Cola_Ext_Pager
      * @param int $totalItems
      * @param string $url
      */
-    public function __construct($curPage = 1, $pageSize = 20, $totalItems, $url = '')
+    public function __construct($curPage = 1, $pageSize = 20, $totalItems = 0, $url = '')
     {
         $this->curPage = intval($curPage);
         $this->pageSize = intval($pageSize);
@@ -54,8 +54,9 @@ class Cola_Ext_Pager
      */
     public function config($key = null, $value = null)
     {
-        if (is_null($key))
+        if (null === $key) {
             return $this->_config;
+        }
 
         if (is_array($key)) {
             $this->_config = $key + $this->_config;
@@ -63,8 +64,9 @@ class Cola_Ext_Pager
             return $this;
         }
 
-        if (is_null($value))
+        if (null === $value) {
             return $this->_config[$key];
+        }
 
         $this->_config[$key] = $value;
         $this->_init();
@@ -79,10 +81,7 @@ class Cola_Ext_Pager
      */
     public function prefix($format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['prefix'];
-
-        return $this->page(null, $format);
+        return $this->page(null, $format ? : $this->_config['prefix']);
     }
 
     /**
@@ -93,10 +92,7 @@ class Cola_Ext_Pager
      */
     public function suffix($format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['suffix'];
-
-        return $this->page(null, $format);
+        return $this->page(null, $format ? : $this->_config['suffix']);
     }
 
     /**
@@ -107,10 +103,7 @@ class Cola_Ext_Pager
      */
     public function first($format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['first'];
-
-        return $this->page(1, $format);
+        return $this->page(1, $format ? : $this->_config['first']);
     }
 
     /**
@@ -121,9 +114,7 @@ class Cola_Ext_Pager
      */
     public function last($format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['last'];
-        return $this->page($this->totalPages, $format);
+        return $this->page($this->totalPages, $format ? : $this->_config['last']);
     }
 
     /**
@@ -134,15 +125,13 @@ class Cola_Ext_Pager
      */
     public function prev($format = null)
     {
-        if (1 == $this->curPage)
+        if (1 == $this->curPage) {
             return '';
-
-        if (is_null($format))
-            $format = $this->_config['prev'];
+        }
 
         $page = $this->curPage - 1;
 
-        return $this->page($page, $format);
+        return $this->page($page, $format ? : $this->_config['prev']);
     }
 
     /**
@@ -153,15 +142,13 @@ class Cola_Ext_Pager
      */
     public function next($format = null)
     {
-        if ($this->curPage == $this->totalPages)
+        if ($this->curPage == $this->totalPages) {
             return '';
-
-        if (is_null($format))
-            $format = $this->_config['next'];
+        }
 
         $page = $this->curPage + 1;
 
-        return $this->page($page, $format);
+        return $this->page($page, $format ? : $this->_config['next']);
     }
 
     /**
@@ -172,10 +159,7 @@ class Cola_Ext_Pager
      */
     public function current($format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['current'];
-
-        return $this->page($this->curPage, $format);
+        return $this->page($this->curPage, $format ? : $this->_config['current']);
     }
 
     /**
@@ -187,9 +171,6 @@ class Cola_Ext_Pager
      */
     public function page($page, $format = null)
     {
-        if (is_null($format))
-            $format = $this->_config['page'];
-
         $p = array(
             '%link%' => $this->url,
             '%curPage%' => $this->curPage,
@@ -201,7 +182,7 @@ class Cola_Ext_Pager
             '%page%' => $page
         );
 
-        return str_replace(array_keys($p), $p, $format);
+        return str_replace(array_keys($p), $p, $format ? : $this->_config['page']);
     }
 
     /**
@@ -211,8 +192,9 @@ class Cola_Ext_Pager
      */
     public function html()
     {
-        if (1 >= $this->totalPages && !$this->_config['showSinglePage'])
+        if (1 >= $this->totalPages && !$this->_config['showSinglePage']) {
             return '';
+        }
 
         $html = $this->prefix() . $this->prev();
 
@@ -252,29 +234,36 @@ class Cola_Ext_Pager
      */
     public function _init()
     {
-        if (1 > $this->pageSize)
+        if (1 > $this->pageSize) {
             $this->pageSize = 20;
+        }
         $this->totalPages = ceil($this->totalItems / $this->pageSize);
-        if (1 > $this->curPage || $this->curPage > $this->totalPages)
+        if (1 > $this->curPage || $this->curPage > $this->totalPages) {
             $this->curPage = 1;
+        }
 
         $this->startPage = $this->curPage - $this->_config['prevNums'];
-        if (1 > $this->startPage)
+        if (1 > $this->startPage) {
             $this->startPage = 1;
+        }
 
         $this->endPage = $this->curPage + $this->_config['nextNums'];
 
         $less = ($this->_config['prevNums'] + $this->_config['nextNums']) - ($this->endPage - $this->startPage);
-        if (0 < $less)
+        if (0 < $less) {
             $this->endPage += $less;
-        if ($this->endPage > $this->totalPages)
+        }
+        if ($this->endPage > $this->totalPages) {
             $this->endPage = $this->totalPages;
+        }
 
         $less = ($this->_config['prevNums'] + $this->_config['nextNums']) - ($this->endPage - $this->startPage);
-        if (0 < $less)
+        if (0 < $less) {
             $this->startPage -= $less;
-        if (1 > $this->startPage)
+        }
+        if (1 > $this->startPage) {
             $this->startPage = 1;
+        }
     }
 
 }

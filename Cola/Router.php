@@ -25,7 +25,7 @@ class Cola_Router
      */
     public function __construct()
     {
-
+        
     }
 
     /**
@@ -61,7 +61,7 @@ class Cola_Router
     /**
      * Match path
      *
-     * @param string $path
+     * @param string $pathInfo
      * @return boolean
      */
     public function match($pathInfo = null)

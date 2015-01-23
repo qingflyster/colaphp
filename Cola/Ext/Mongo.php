@@ -11,20 +11,15 @@ Class Cola_Ext_Mongo
      *
      * @param array $config
      */
-    public function __construct($config = array())
+    public function __construct(array $config = array())
     {
-        $config = (array) $config + array('server' => 'mongodb://localhost:27017', 'options' => array('connect' => true));
+        $config += array('server' => 'mongodb://localhost:27017', 'options' => array('connect' => true));
 
-        extract($config);
+        $this->_mongo = new MongoClient($config['server'], $config['options']);
 
-        $this->_mongo = new Mongo($server, $options);
-
-        if (isset($database)) {
-            $this->_db = $this->db($database);
+        if (isset($config['database'])) {
+            $this->_db = $this->db($config['database']);
         }
-
-        if (isset($user) && isset($password))
-            $this->auth($user, $password);
     }
 
     /**
@@ -50,23 +45,6 @@ Class Cola_Ext_Mongo
         }
 
         return $this->_db;
-    }
-
-    /**
-     * Authenticate
-     *
-     * @param string $user
-     * @param string $password
-     */
-    public function auth($user, $password)
-    {
-        $result = $this->_db->authenticate($user, $password);
-
-        if (1 == $result['ok']) {
-            return true;
-        }
-
-        throw new Cola_Exception('Mongo Auth Failed: bad user or password.');
     }
 
     /**
@@ -100,23 +78,25 @@ Class Cola_Ext_Mongo
      * */
     public function find($collection, $query = array(), $options = array())
     {
-        $options += array('fields' => array(), 'sort' => array(), 'skip' => 0, 'limit' => 0, 'cursor' => false, 'tailable' => false);
-        extract($options);
+        $c = $this->collection($collection);
+        $cur = $c->find($query, $options['fields']);
 
-        $collection = $this->collection($collection);
-        $cur = $collection->find($query, $fields);
+        if ($options['sort']) {
+            $cur->sort($options['sort']);
+        }
+        if ($options['skip']) {
+            $cur->skip($options['skip']);
+        }
+        if ($options['limit']) {
+            $cur->limit($options['limit']);
+        }
+        if ($options['tailable']) {
+            $cur->tailable($options['tailable']);
+        }
 
-        if ($sort)
-            $cur->sort($sort);
-        if ($skip)
-            $cur->skip($skip);
-        if ($limit)
-            $cur->limit($limit);
-        if ($tailable)
-            $cur->tailable($tailable);
-
-        if ($cursor)
+        if ($options['cursor']) {
             return $cur;
+        }
 
         return iterator_to_array($cur);
     }
@@ -131,8 +111,7 @@ Class Cola_Ext_Mongo
      */
     public function findOne($collection, $query = array(), $fields = array())
     {
-        $collection = $this->collection($collection);
-        return $collection->findOne($query, $fields);
+        return $this->collection($collection)->findOne($query, $fields);
     }
 
     /**
@@ -263,8 +242,7 @@ Class Cola_Ext_Mongo
      */
     public static function Timestamp($sec = null, $inc = 0)
     {
-        if (empty($sec))
-            $sec = time();
+        empty($sec) && $sec = time();
         return new MongoTimestamp($sec, $inc);
     }
 

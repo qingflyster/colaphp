@@ -44,20 +44,20 @@ class Cola_Ext_Cache_Redis extends Cola_Ext_Cache_Abstract
      * Set cache
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed $data
      * @param int $ttl
      * @return boolean
      */
-    public function set($id, $data, $ttl = null)
+    public function set($key, $data, $ttl = null)
     {
         if (null === $ttl) {
             $ttl = $this->options['ttl'];
         }
 
         if (empty($ttl)) {
-            return $this->conn->set($id, $data);
+            return $this->conn->set($key, $data);
         } else {
-            return $this->conn->setex($id, $ttl, $data);
+            return $this->conn->setex($key, $ttl, $data);
         }
     }
 

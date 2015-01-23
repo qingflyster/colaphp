@@ -69,28 +69,32 @@ class Cola_Ext_Upload
      */
     public function files()
     {
-        if ($this->files)
+        if ($this->files) {
             return $this->files;
+        }
 
         $files = array();
 
         foreach ($_FILES as $field => $data) {
-            if (empty($data['name']))
+            if (empty($data['name'])) {
                 continue;
+            }
             if (is_string($data['name'])) {
                 $files[] = $data + array('field' => $field, 'ext' => $this->getExt($data['name'], true));
                 continue;
             }
 
-            if (!is_array($data['name']))
+            if (!is_array($data['name'])) {
                 continue;
+            }
 
             $cnt = count($data['name']);
             $keys = array('name', 'type', 'tmp_name', 'error', 'size');
 
             for ($i = 0; $i < $cnt; $i++) {
-                if (empty($data['name'][$i]))
+                if (empty($data['name'][$i])) {
                     continue;
+                }
                 $row = array();
                 foreach ($keys as $key) {
                     if (!isset($data[$key][$i])) {
@@ -107,8 +111,9 @@ class Cola_Ext_Upload
         }
 
         foreach ($files as $file) {
-            if ($this->check($file))
+            if ($this->check($file)) {
                 continue;
+            }
             $files = array();
             break;
         }
@@ -121,7 +126,7 @@ class Cola_Ext_Upload
     /**
      * Save uploaded files
      *
-     * @param array $file
+     * @param array $namedBy
      * @return array
      */
     public function save($namedBy = 'Cola_Ext_Upload::defaultName')
@@ -159,8 +164,9 @@ class Cola_Ext_Upload
      */
     public function move($file, $name = null)
     {
-        if (null === $name)
+        if (null === $name) {
             $name = $file['name'];
+        }
 
         $full = $this->config['savePath'] . DIRECTORY_SEPARATOR . $name;
 
@@ -221,15 +227,16 @@ class Cola_Ext_Upload
     /**
      * Get image size
      *
-     * @param string $file
+     * @param string $name
      * @return array like array(x, y),x is width, y is height
      */
     public function getImageSize($name)
     {
         if (function_exists('getimagesize')) {
             $size = @getimagesize($name);
-            if (!empty($size))
+            if (!empty($size)) {
                 return array($size[0], $size[1]);
+            }
         }
 
         return false;

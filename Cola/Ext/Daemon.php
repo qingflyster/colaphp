@@ -113,8 +113,9 @@ abstract class Cola_Ext_Daemon
      */
     public function pid()
     {
-        if (!file_exists($this->_options['pid']))
+        if (!file_exists($this->_options['pid'])) {
             return false;
+        }
         $pid = intval(file_get_contents($this->_options['pid']));
         return file_exists("/proc/{$pid}") ? $pid : false;
     }
@@ -141,8 +142,9 @@ abstract class Cola_Ext_Daemon
             while (!$this->_exit) {
                 $this->_autoRestart();
                 $this->_todo();
-                if ($this->_exit)
+                if ($this->_exit) {
                     break;
+                }
                 try {
                     $this->main();
                 } catch (Exception $e) {
@@ -160,7 +162,7 @@ abstract class Cola_Ext_Daemon
     {
         if (!$pid = $this->pid()) {
             $this->log('Daemon is not running', self::LOG_ECHO);
-            exit();
+            exit;
         }
 
         posix_kill($pid, SIGTERM);
@@ -174,7 +176,7 @@ abstract class Cola_Ext_Daemon
     {
         if (!$pid = $this->pid()) {
             $this->log('Daemon is not running', self::LOG_ECHO);
-            exit();
+            exit;
         }
 
         posix_kill($pid, SIGHUP);
@@ -263,11 +265,11 @@ abstract class Cola_Ext_Daemon
     protected function _daemonize()
     {
         if (!$this->_check()) {
-            exit();
+            exit;
         }
 
         if (!$this->_fork()) {
-            exit();
+            exit;
         }
 
         $this->_sigHandlers += array(
@@ -339,7 +341,7 @@ abstract class Cola_Ext_Daemon
         }
 
         if ($pid) { // parent
-            exit();
+            exit;
         }
 
         // children
@@ -400,7 +402,8 @@ abstract class Cola_Ext_Daemon
     protected function _autoRestart()
     {
         if (
-                (0 !== $this->_options['maxTimes'] && $this->_cnt >= $this->_options['maxTimes']) || (0 !== $this->_options['maxMemory'] && memory_get_usage(true) >= $this->_options['maxMemory'])
+                (0 !== $this->_options['maxTimes'] && $this->_cnt >= $this->_options['maxTimes']) ||
+                (0 !== $this->_options['maxMemory'] && memory_get_usage(true) >= $this->_options['maxMemory'])
         ) {
             $this->_todos[] = array(array($this, '_restart'));
             $this->_cnt = 0;

@@ -42,7 +42,7 @@ class Cola_Ext_Encrypt
      */
     public function config($key = null, $value = null)
     {
-        if (is_null($key)) {
+        if (null === $key) {
             return $this->_config;
         }
 
@@ -51,7 +51,7 @@ class Cola_Ext_Encrypt
             return $this;
         }
 
-        if (is_null($value)) {
+        if (null === $value) {
             return $this->_config[$key];
         }
 
@@ -67,9 +67,7 @@ class Cola_Ext_Encrypt
      */
     public function encode($str, $key = null)
     {
-        if (is_null($key)) {
-            $key = $this->_key;
-        }
+        $key || $key = $this->_key;
 
         if ($this->_config['xor']) {
             $str = $this->_xorEncode($str, $key);
@@ -95,8 +93,7 @@ class Cola_Ext_Encrypt
      */
     public function decode($str, $key = null)
     {
-        if (is_null($key))
-            $key = $this->_key;
+        $key || $key = $this->_key;
 
         if (preg_match('/[^a-zA-Z0-9\/\+=]/', $str)) {
             return false;
@@ -222,8 +219,9 @@ class Cola_Ext_Encrypt
         $code = '';
 
         for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
-            if ($j >= $hashlen)
+            if ($j >= $hashlen) {
                 $j = 0;
+            }
             $code .= chr((ord($str[$i]) + ord($hash[$j])) % 256);
         }
 
@@ -245,11 +243,13 @@ class Cola_Ext_Encrypt
         $code = '';
 
         for ($i = 0, $j = 0; $i < $strlen; ++$i, ++$j) {
-            if ($j >= $hashlen)
+            if ($j >= $hashlen) {
                 $j = 0;
+            }
             $temp = ord($str[$i]) - ord($hash[$j]);
-            if ($temp < 0)
+            if ($temp < 0) {
                 $temp = $temp + 256;
+            }
             $code .= chr($temp);
         }
 
